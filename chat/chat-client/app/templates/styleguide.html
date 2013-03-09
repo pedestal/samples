@@ -1,0 +1,98 @@
+<_within file="application.html">
+  
+  <div id="content">
+
+    <h1>chat-client Styleguide</h1>
+    
+    <p>
+      This is an example styleguide based on Twitter Bootstrap. You
+      should consider maintaining a styleguide like this for your
+      application.  
+    </p>
+    
+    <h3>Navigation</h3>
+
+    <div class="navbar">
+      <div class="navbar-inner">
+        <a class="brand" href="#">Sample</a>
+        
+        <ul class="nav">
+          <li class="active"><a href="#">One</a></li>
+          <li><a href="#">Two</a></li>
+        </ul>
+        <ul class="nav pull-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Other
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a tabindex="-1" href="#">Popular Items</a></li>
+              <li><a tabindex="-1" href="#">Todays Special</a></li>
+              <li class="divider"></li>
+              <li><a tabindex="-1" href="#">Store Finder</a></li>
+            </ul>
+          </li>
+        </ul>
+        
+      </div>
+    </div>
+
+    <h3>Forms</h3>
+    
+    <form>
+      <label>What is your name?</label>
+      <input class="input-xxlarge" type="text" placeholder="Enter name here">
+      <br/>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <h3>Buttons</h3>
+
+    <button class="btn btn-primary">Default</button>
+    
+    <button class="btn btn-success">Go</button>
+
+    <button class="btn btn-danger">Cancel</button>
+
+    <h3>Modal</h3>
+
+    <a href="#myModal" role="button" class="btn btn-primary" 
+       data-toggle="modal">Launch demo modal</a>
+
+    <div class="modal hide fade" id="myModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Place another order</h3>
+      </div>
+      <div class="modal-body">
+        <form>
+          <label>Name:</label>
+          <input class="input-xlarge" type="text" placeholder="Name">
+          <label>Quantity:</label>
+          <input class="input-small" type="text" placeholder="Quantity">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        <button class="btn btn-primary">Continue</button>
+      </div>
+    </div>
+
+    <h3>Pagination</h3>
+
+    <div class="pagination pagination-centered">
+      <ul>
+        <li><a href="#">Prev</a></li>
+        <li><a href="#">1</a></li>
+        <li><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li><a href="#">4</a></li>
+        <li><a href="#">Next</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+</_within>

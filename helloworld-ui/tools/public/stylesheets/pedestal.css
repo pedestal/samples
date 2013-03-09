@@ -1,0 +1,58 @@
+/* begin Clojure data formatter */
+
+.keyword {
+   color: purple;
+}
+
+.symbol {
+   color: blue;
+}
+
+.string {
+   color: darkgreen;
+}
+
+/* end Clojure data formatter */
+
+/* begin customize bootstrap */
+
+.nav > li.disabled {
+  .opacity(40);
+  pointer-events: none;
+}
+.nav > li.disabled a {
+  color: #ddd;
+}
+.nav > li.disabled > a:hover {
+  cursor: default;
+  text-decoration: none;
+  background-color: inherit;
+}
+
+div.hero-unit p.small {
+  font-size:14px;
+  line-height:18px
+}
+
+/* end customize bootstrap */
+
+/* start pedestal toolbar */
+
+#pedestal-toolbar {
+  background-color: rgba(255,255,255,1);
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  padding: 20px;
+  padding-right: 50px;
+  box-shadow: inset 1px 1px 1px #666;
+  border-radius: 5px;
+  border-image: initial;
+  font-size: 10pt;
+}
+
+#pedestal-toolbar a {
+  display: block;
+}
+
+/* end pedestal toolbar */
