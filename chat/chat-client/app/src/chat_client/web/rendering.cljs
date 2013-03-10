@@ -19,8 +19,8 @@
   (let [parent (render/get-parent-id r path)]
     (dom/destroy-children! (dom/by-id parent))))
 
-(defn form-event-enter [r [_ path event-name messages] d]
-  (condp = event-name
+(defn form-transform-enable [r [_ path transform-name messages] d]
+  (condp = transform-name
     :send-message
     ;; Remove class hide from .enter-message
     (do
@@ -31,10 +31,10 @@
                             (fn [] (let [text-node (dom/by-id "message-input")
                                         text (.-value text-node)]
                                     (set! (.-value text-node) "")
-                                    (msg/fill event-name messages {:text text})))))
+                                    (msg/fill transform-name messages {:text text})))))
 
     :clear-messages
-    (events/send-on-click (dom/by-id "clear-button") d event-name messages)
+    (events/send-on-click (dom/by-id "clear-button") d transform-name messages)
 
     :set-nickname
     (do
@@ -47,15 +47,15 @@
                               (let [nickname-node (dom/by-id "nickname-input")
                                     nickname (.-value nickname-node)]
                                 (set! (.-value nickname-node) "")
-                                (msg/fill event-name messages {:nickname nickname})))))
+                                (msg/fill transform-name messages {:nickname nickname})))))
 
     :clear-nickname
     (events/send-on-click (dom/by-class "nickname-icon")
                           d
-                          (msg/fill event-name messages))))
+                          (msg/fill transform-name messages))))
 
-(defn form-event-exit [r [_ path event-name messages] d]
-  (condp = event-name
+(defn form-transform-disable [r [_ path transform-name messages] d]
+  (condp = transform-name
     :send-message
     (do
       (dom/add-class! (dom/by-class "enter-message") "hide")
@@ -90,8 +90,8 @@
 (defn render-config []
   [[:node-create       [:chat]         render-chat-page]
    [:node-destroy      [:chat]         destroy-chat-page]
-   [:transform-enable  [:chat :form]   form-event-enter]
-   [:transform-disable [:chat :form]   form-event-exit]
+   [:transform-enable  [:chat :form]   form-transform-enable]
+   [:transform-disable [:chat :form]   form-transform-disable]
    [:node-create       [:chat :log :*] create-message-node]
    [:node-destroy      [:chat :log :*] auto/default-exit]
    [:value             [:chat :log :*] update-message]])
