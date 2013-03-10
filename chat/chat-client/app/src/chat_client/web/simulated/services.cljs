@@ -31,5 +31,5 @@
                                             msg/type :received
                                             :text (:text msg)
                                             :nickname (:nickname msg)
-                                            :id (:id msg)}) 2000)
+                                            :id (:id msg)}) 500)
     (.log js/console (str "Send to Server: " (pr-str message)))))
