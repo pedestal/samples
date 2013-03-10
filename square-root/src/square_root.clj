@@ -10,8 +10,8 @@
 ;; models. All inputs are numbers. The model doesn't do anything but
 ;; return the number it was given.
 
-(defn number-model [old event]
-  (if (= (msg/type event) msg/init) (:value event) (:n event)))
+(defn number-model [old message]
+  (if (= (msg/type message) msg/init) (:value message) (:n message)))
 
 ;; Create the functions which will be used as "views". Each of these is
 ;; a pure function.
@@ -47,8 +47,8 @@
                             :else new-guess)]
         {:good-enough? good-enough? :new-guess new-guess}))))
 
-;; Create an "events" function which will be used to generate new
-;; events which will cause the calculation to continue.
+;; Create an "feedback" function which will be used to generate new
+;; messages which will cause the calculation to continue.
 
 (defn continue-calc [view-name o n]
   (when (not (or (:good-enough? n)
@@ -66,7 +66,7 @@
              :sum          {:fn sum :input #{:guess :divide}}
              :half         {:fn half :input #{:sum}}
              :good-enough? {:fn good-enough? :input #{:half :accuracy}}}
-   :events  {:good-enough? continue-calc}
+   :feedback {:good-enough? continue-calc}
    :emitters {:answer {:fn default-emitter-fn :input #{:x :half}}}})
 
 ;; Create a Renderer which will print to the console.
