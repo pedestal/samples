@@ -4,5 +4,5 @@
 
 (defmacro sample-templates
   []
-  {:message (dtfn (tnodes "chat-client/sample.html" "message") #{:id})
-   :chat (dtfn (tnodes "chat-client/sample.html" "chat") #{})})
+  {:message (dtfn (tnodes "chat-client.html" "message") #{:id})
+   :chat (dtfn (tnodes "chat-client.html" "chat") #{})})
