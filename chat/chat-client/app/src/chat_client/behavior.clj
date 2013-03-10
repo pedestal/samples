@@ -8,13 +8,13 @@
 
 ;; Models
 
-(defn outbound-model [state event]
-  (case (msg/type event)
-    msg/init (:value event)
+(defn outbound-model [state message]
+  (case (msg/type message)
+    msg/init (:value message)
     :send-message (let [msg {:id (util/random-id)
                              :time (platform/date)
-                             :nickname (:nickname event)
-                             :text (:text event)
+                             :nickname (:nickname message)
+                             :text (:text message)
                              :status :pending}]
                     (-> state
                         (update-in [:sent] conj msg)
@@ -24,21 +24,22 @@
                                (dissoc :sending)))
     state))
 
-(defn inbound-model [state event]
-  (case (msg/type event)
-    msg/init (:value event)
-    :received (let [msg {:id (:id event) :time (platform/date)
-                         :nickname (:nickname event) :text (:text event)}]
+(defn inbound-model [state message]
+  (case (msg/type message)
+    msg/init (:value message)
+    :received (let [msg {:id (:id message) :time (platform/date)
+                         :nickname (:nickname message) :text (:text message)}]
                 (update-in state [:received] conj msg))
     :clear-messages (do (log/debug :in :clear-messages :model :inbound) ( assoc state :received []))))
 
-(defn nickname-model [state event]
-  (case (msg/type event)
-    msg/init (:value event)
-    :set-nickname (:nickname event)
+(defn nickname-model [state message]
+  (case (msg/type message)
+    msg/init (:value message)
+    :set-nickname (:nickname message)
     :clear-nickname nil))
 
 ;; Views
+
 (defn diff-by [f new old]
   (let [o (set (map f old))
         n (set (map f new))
@@ -82,7 +83,7 @@
     (let [updated-msgs  (filter (partial updated-message? out-msgs-index) new-msgs)]
       (map #(assoc % :status :confirmed) updated-msgs))))
 
-;; Events
+;; Output
 
 (defn send-message-to-server [_ _ outbound]
   [{msg/topic :server :out-message (:sending outbound)}])
@@ -94,7 +95,7 @@
   [{:chat
     {:log {}
      :form
-     {:events
+     {:transforms
       {:clear-messages [{msg/topic :outbound} {msg/topic :inbound}]
        :set-nickname [{msg/topic :nickname (msg/param :nickname) {}}]}}}}])
 
@@ -125,18 +126,6 @@
      [:transform-disable [:chat :form] :send-message]
      [:transform-enable [:chat :form] :set-nickname [{msg/topic :nickname
                                                       (msg/param :nickname) {}}]]]))
-
-;; Enable send-message
-
-
-;; Disable send-message
-;; Unbind events
-;; Add class hide to .enter-message
-
-;; Disable set-nickname
-;; Unbind events
-;; Add class hide to .enter-nickname
-
 
 (def sort-order
   {:new-messages 0
