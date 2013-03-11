@@ -25,12 +25,18 @@
     ;; Remove class hide from .enter-message
     (do
       (dom/remove-class! (dom/by-class "enter-message") "hide")
-      ;; TODO: Enter should also work for submitting
+      (.focus (dom/by-id "message-input"))
+      (events/send-on :keyup (dom/by-id "message-input")
+                      d
+                      (fn [e]
+                        (if (= (:keyCode e) 13)
+                          (.click (dom/by-id "send-message-button")))))
       (events/send-on-click (dom/by-id "send-message-button")
                             d
                             (fn [] (let [text-node (dom/by-id "message-input")
                                         text (.-value text-node)]
                                     (set! (.-value text-node) "")
+
                                     (msg/fill transform-name messages {:text text})))))
 
     :clear-messages
@@ -40,7 +46,11 @@
     (do
       (dom/add-class! (dom/by-id "root") "startup")
       (dom/remove-class! (dom/by-class "enter-nickname") "hide")
-      ;; TODO: Enter should also work for submitting
+      (events/send-on :keyup (dom/by-id "nickname-input")
+                      d
+                      (fn [e] 
+                        (if (= (:keyCode e) 13)
+                          (.click (dom/by-id "set-nickname-button")))))
       (events/send-on-click (dom/by-id "set-nickname-button")
                             d
                             (fn []
@@ -59,13 +69,15 @@
     :send-message
     (do
       (dom/add-class! (dom/by-class "enter-message") "hide")
-      (dom-events/unlisten! (dom/by-id "send-message-button")))
+      (dom-events/unlisten! (dom/by-id "send-message-button"))
+      (dom-events/unlisten! (dom/by-id "message-input")))
 
     :set-nickname
     (do
       (dom/remove-class! (dom/by-id "root") "startup")
       (dom/add-class! (dom/by-class "enter-nickname") "hide")
-      (dom-events/unlisten! (dom/by-id "set-nickname-button")))
+      (dom-events/unlisten! (dom/by-id "set-nickname-button"))
+      (dom-events/unlisten! (dom/by-id "nickname-input")))
 
     :clear-nickname
     (dom-events/unlisten! (dom/by-class "nickname-icon"))))
