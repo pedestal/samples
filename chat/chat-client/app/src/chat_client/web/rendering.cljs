@@ -23,31 +23,33 @@
   (condp = transform-name
     :send-message
     ;; Remove class hide from .enter-message
-    (do
-      (dom/remove-class! (dom/by-class "enter-message") "hide")
-      ;; TODO: Enter should also work for submitting
-      (events/send-on-click (dom/by-id "send-message-button")
-                            d
-                            (fn [] (let [text-node (dom/by-id "message-input")
-                                        text (.-value text-node)]
-                                    (set! (.-value text-node) "")
-                                    (msg/fill transform-name messages {:text text})))))
+    (let [enter-message-form (dom/by-class "enter-message")]
+      (dom/remove-class! enter-message-form "hide")
+      (.focus (dom/by-id "message-input"))
+      (events/send-on :submit
+                      enter-message-form
+                      d
+                      (fn [] (let [text-node (dom/by-id "message-input")
+                                  text (.-value text-node)]
+                              (set! (.-value text-node) "")
+                              (msg/fill transform-name messages {:text text})))))
 
     :clear-messages
     (events/send-on-click (dom/by-id "clear-button") d transform-name messages)
 
     :set-nickname
-    (do
+    (let [enter-nickname-form (dom/by-class "enter-nickname")]
       (dom/add-class! (dom/by-id "root") "startup")
-      (dom/remove-class! (dom/by-class "enter-nickname") "hide")
-      ;; TODO: Enter should also work for submitting
-      (events/send-on-click (dom/by-id "set-nickname-button")
-                            d
-                            (fn []
-                              (let [nickname-node (dom/by-id "nickname-input")
-                                    nickname (.-value nickname-node)]
-                                (set! (.-value nickname-node) "")
-                                (msg/fill transform-name messages {:nickname nickname})))))
+      (dom/remove-class! enter-nickname-form "hide")
+      (.focus (dom/by-id "nickname-input"))
+      (events/send-on :submit
+                      enter-nickname-form
+                      d
+                      (fn []
+                        (let [nickname-node (dom/by-id "nickname-input")
+                              nickname (.-value nickname-node)]
+                          (set! (.-value nickname-node) "")
+                          (msg/fill transform-name messages {:nickname nickname})))))
 
     :clear-nickname
     (events/send-on-click (dom/by-class "nickname-icon")
@@ -57,15 +59,15 @@
 (defn form-transform-disable [r [_ path transform-name messages] d]
   (condp = transform-name
     :send-message
-    (do
-      (dom/add-class! (dom/by-class "enter-message") "hide")
-      (dom-events/unlisten! (dom/by-id "send-message-button")))
+    (let [enter-message-form (dom/by-class "enter-message")]
+      (dom/add-class! enter-message-form "hide")
+      (dom-events/unlisten! enter-message-form))
 
     :set-nickname
-    (do
+    (let [enter-nickname-form (dom/by-class "enter-nickname")]
       (dom/remove-class! (dom/by-id "root") "startup")
-      (dom/add-class! (dom/by-class "enter-nickname") "hide")
-      (dom-events/unlisten! (dom/by-id "set-nickname-button")))
+      (dom/add-class! enter-nickname-form "hide")
+      (dom-events/unlisten! enter-nickname-form))
 
     :clear-nickname
     (dom-events/unlisten! (dom/by-class "nickname-icon"))))
