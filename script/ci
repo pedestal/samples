@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -e
+
+PEDESTAL_REPO=git@github.com:pedestal/pedestal.git
+declare -a SAMPLE_PROJECTS=(chat/chat-server chat/chat-client cors helloworld-ui ring-middleware server-with-links square-root template-server)
+
+
+git clone $PEDESTAL_REPO /tmp/pedestal-latest
+pushd /tmp/pedestal-latest
+lein sub install
+popd
+for PROJECT in ${SAMPLE_PROJECTS[@]}
+do
+    pushd $PROJECT
+    lein test
+    popd
+done
+rm -rf /tmp/pedestal-latest
