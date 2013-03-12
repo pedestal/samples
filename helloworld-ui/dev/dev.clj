@@ -1,4 +1,4 @@
-(ns user
+(ns dev
   (:use [cljs.repl :only [repl]]
         [cljs.repl.browser :only [repl-env]])
   (:require [io.pedestal.app-tools.server :as server]

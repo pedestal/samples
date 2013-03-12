@@ -6,7 +6,13 @@ This sample code is the result of running:
 lein new pedestal-app helloworld-ui
 ```
 
-You may start the application by running `lein repl`, then entering `(run)` at the prompt.
+You may start the application by running the following commands:
+
+```
+lein repl
+(dev)
+(run)
+```
 
 It is intended to work alongside the documentation here:
 
