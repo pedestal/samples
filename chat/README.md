@@ -14,6 +14,7 @@ To run from the `chat` directory...
 ```
 cd chat-client
 lein repl
+(dev)
 (watch :development)
 ```
 Open another terminal, then:
