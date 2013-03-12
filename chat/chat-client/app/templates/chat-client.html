@@ -32,25 +32,23 @@
           <div class='chat-footer'></div>
         </div>
         <div class='chat-bar'>
-
-            <div class='enter-message hide'>
-              <div class='right'>
-                <i class='nickname-icon'></i>
-                <button class='send-button' id="send-message-button" type="submit">Send</button>
-              </div>
-              <i class='message-icon focused'></i>
-              <input id="message-input" type="text" placeholder='Enter a message...'>
+          <form class='enter-message hide'>
+            <div class='right'>
+              <i class='nickname-icon'></i>
+              <button class='send-button' id="send-message-button" type="submit">Send</button>
             </div>
-            <div class='enter-nickname'>
-              <div class='right'>
-                <!-- <i class='message-icon'></i> -->
-                <button class='ok-button' id="set-nickname-button" type="submit">OK!</button>
-              </div>
-              <div class='tooltip'>I know you’re excited but please enter a nickname first.</div>
-              <i class='nickname-icon focused'></i>
-              <input id="nickname-input" type="text" placeholder='Enter your nickname...'>
+            <i class='message-icon focused'></i>
+            <input id="message-input" type="text" placeholder='Enter a message...'>
+          </form>
+          <form class='enter-nickname'>
+            <div class='right'>
+              <!-- <i class='message-icon'></i> -->
+              <button class='ok-button' id="set-nickname-button" type="submit">OK!</button>
             </div>
-
+            <div class='tooltip'>I know you’re excited but please enter a nickname first.</div>
+            <i class='nickname-icon focused'></i>
+            <input id="nickname-input" type="text" placeholder='Enter your nickname...'>
+          </form>
         </div>
       </div>
       <!--
