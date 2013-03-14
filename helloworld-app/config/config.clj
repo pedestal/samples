@@ -3,11 +3,11 @@
             [io.pedestal.app-tools.compile :as compile]))
 
 (def configs
-  {:helloworld-ui
+  {:helloworld-app
    {:build {:watch-files (compile/html-files-in "templates")
             ;; When an HTML file changes, trigger the compilation of
             ;; any files which use macros to read in templates. 
-            :triggers {:html [#"helloworld_ui/app.js" #"greeting/app.js"]}}
+            :triggers {:html [#"helloworld_app/app.js" #"greeting/app.js"]}}
     :application {:generated-javascript "generated-js"
                   :api-server {:host "localhost" :port 8080 :log-fn nil}
                   :default-template "application.html"
@@ -15,11 +15,11 @@
     :control-panel {:design {:uri "/design.html"
                              :name "Design"
                              :order 0}}
-    :aspects {:development {:uri "/helloworld-ui-dev.html"
+    :aspects {:development {:uri "/helloworld-app-dev.html"
                             :name "Development"
-                            :out-file "helloworld-ui-dev.js"
-                            :scripts ["goog.require('helloworld_ui.app');"
-                                      "helloworld_ui.app.main();"]
+                            :out-file "helloworld-app-dev.js"
+                            :scripts ["goog.require('helloworld_app.app');"
+                                      "helloworld_app.app.main();"]
                             :order 1}
               :fresh {:uri "/fresh.html"
                       :name "Fresh"
@@ -28,11 +28,11 @@
                                 "io.pedestal.app.net.repl_client.repl();"]
                       :order 2
                       :output-root :tools-public}
-              :production {:uri "/helloworld-ui.html"
+              :production {:uri "/helloworld-app.html"
                            :name "Production"
                            :optimizations :advanced
-                           :out-file "helloworld-ui.js"
-                           :scripts ["helloworld_ui.app.main();"]
+                           :out-file "helloworld-app.js"
+                           :scripts ["helloworld_app.app.main();"]
                            :order 3}
               :greeting {:uri "/greeting-dev.html"
                          :name "Greeting"

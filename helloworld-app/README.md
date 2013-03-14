@@ -1,9 +1,9 @@
-# helloworld-ui
+# helloworld-app
 
 This sample code is the result of running:
 
 ```bash
-lein new pedestal-app helloworld-ui
+lein new pedestal-app helloworld-app
 ```
 
 You may start the application by running the following commands:
