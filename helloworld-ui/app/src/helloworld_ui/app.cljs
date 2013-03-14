@@ -14,12 +14,12 @@
             [io.pedestal.app.net.repl-client :as repl-client])
   (:require-macros [helloworld-ui.html-templates :as html-templates]))
 
-;; Models
+;; Transforms
 
-(defn word-model [state event]
+(defn word-transform [state event]
   (if (= (msg/type event) msg/init) (:value event) (:input event)))
 
-;; Views
+;; Combines
 
 (defn backwards [state input-name old new]
   (string/reverse new))
@@ -27,10 +27,10 @@
 (defn length [state input-name old new]
   (count new))
 
-;; Emitters
+;; Emits
 
-(defn word-emitter
-  ([views]
+(defn word-emit
+  ([inputs]
      [{:app {:form {:events {:update-word [{msg/topic :word (msg/param :input) {}}]}}}}])
   ([inputs changed-inputs]
      (reduce (fn [a input-name]
@@ -74,10 +74,10 @@
 ;; Dataflow
 
 (def word-app
-  {:models   {:word    {:init "" :fn word-model}}
-   :views    {:reverse {:fn backwards :input #{:word}}
+  {:transform   {:word    {:init "" :fn word-transform}}
+   :combine    {:reverse {:fn backwards :input #{:word}}
               :length  {:fn length :input #{:word}}}
-   :emitters {:emitter {:fn word-emitter :input #{:word :reverse :length}}}})
+   :emit {:emit {:fn word-emit :input #{:word :reverse :length}}}})
 
 ;; Start
 

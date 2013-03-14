@@ -24,6 +24,6 @@
         app-model (render/consume-app-model app render-fn)]
     (p/start services)
     (render/consume-app-model app render-fn)
-    (app/consume-output app services/services-fn)
+    (app/consume-effects app services/services-fn)
     (app/begin app)
     {:app app :app-model app-model}))

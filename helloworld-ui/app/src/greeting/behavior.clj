@@ -3,21 +3,21 @@
               [io.pedestal.app.messages :as msg]
               [io.pedestal.app :as app]))
 
-(defn greeting-model-fn [state event]
+(defn greeting-transform-fn [state event]
   (if (= (msg/type event) msg/init) (:value event) (:input event)))
 
 
-;; Emitters
+;; Emits
 
-(defn greeting-emitter-fn
+(defn greeting-emit-fn
   ([inputs]
      [{:app {:greeting  {}}}])
   ([inputs changed-inputs]
      [[:value [:app :greeting] (:new (get inputs (first changed-inputs)))]]))
 
 (def greeting-app
-  {:models {:greeting-model {:init "THIS IS NEVER USED" :fn greeting-model-fn}}
-   :emitters {:greeting-emitter {:fn greeting-emitter-fn :input #{:greeting-model}}}})
+  {:transform {:greeting-transform {:init "THIS IS NEVER USED" :fn greeting-transform-fn}}
+   :emit {:greeting-emit {:fn greeting-emit-fn :input #{:greeting-transform}}}})
 
 (comment
 
@@ -33,8 +33,8 @@
   (app/begin app)
 
   (p/put-message (:input app)
-                 {msg/topic :greeting-model msg/type :greeting-event :input "Have a good one."})
+                 {msg/topic :greeting-transform msg/type :greeting-event :input "Have a good one."})
   (p/put-message (:input app)
-                 {msg/topic :greeting-model msg/type :something :input "How're you doing?"})
+                 {msg/topic :greeting-transform msg/type :something :input "How're you doing?"})
 
   )

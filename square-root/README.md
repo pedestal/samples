@@ -13,8 +13,8 @@ walk through using the sample inside a repl.
 * Use the `pedestal.app` and `pedestal.app.examples.square-root` namespaces:
 
 ```clojure
-(use 'pedestal.app)
-(use 'pedestal.app.examples.square-root)
+(use 'io.pedestal.app)
+(use 'square-root)
 ```
 
 * Walk through the code at the end of `square_root.clj`

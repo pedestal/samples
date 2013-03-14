@@ -5,6 +5,6 @@
 (defn receive-messages [app]
   (.setTimeout js/window
                (fn [] (p/put-message (:input app)
-                                    {msg/topic :greeting-model
+                                    {msg/topic :greeting-transform
                                      msg/type :something
                                      :input "Have a good one."})) 5000))

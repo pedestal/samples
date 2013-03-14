@@ -6,9 +6,9 @@
             [io.pedestal.app.util.log :as log]
             [chat-client.util :as util]))
 
-;; Models
+;; Transforms
 
-(defn outbound-model [state message]
+(defn outbound-transform [state message]
   (case (msg/type message)
     msg/init (:value message)
     :send-message (let [msg {:id (util/random-id)
@@ -19,26 +19,26 @@
                     (-> state
                         (update-in [:sent] conj msg)
                         (assoc :sending msg)))
-    :clear-messages (do (log/debug :in :clear-messages :model :outbound) (-> state
+    :clear-messages (do (log/debug :in :clear-messages :transform :outbound) (-> state
                                (assoc :sent [])
                                (dissoc :sending)))
     state))
 
-(defn inbound-model [state message]
+(defn inbound-transform [state message]
   (case (msg/type message)
     msg/init (:value message)
     :received (let [msg {:id (:id message) :time (platform/date)
                          :nickname (:nickname message) :text (:text message)}]
                 (update-in state [:received] conj msg))
-    :clear-messages (do (log/debug :in :clear-messages :model :inbound) ( assoc state :received []))))
+    :clear-messages (do (log/debug :in :clear-messages :transform :inbound) ( assoc state :received []))))
 
-(defn nickname-model [state message]
+(defn nickname-transform [state message]
   (case (msg/type message)
     msg/init (:value message)
     :set-nickname (:nickname message)
     :clear-nickname nil))
 
-;; Views
+;; Combines
 
 (defn diff-by [f new old]
   (let [o (set (map f old))
@@ -83,13 +83,13 @@
     (let [updated-msgs  (filter (partial updated-message? out-msgs-index) new-msgs)]
       (map #(assoc % :status :confirmed) updated-msgs))))
 
-;; Output
+;; Effect
 
 (defn send-message-to-server [_ _ outbound]
   [{msg/topic :server :out-message (:sending outbound)}])
 
 
-;; Emitters
+;; Emits
 
 (def ^:private initial-app-model
   [{:chat
@@ -135,7 +135,7 @@
    :deleted-messages 1
    :updated-messages 2})
 
-(defn chat-emitter
+(defn chat-emit
   ([inputs] initial-app-model)
   ([inputs changed-inputs]
      (reduce (fn [a input-name]
@@ -152,11 +152,11 @@
 ;; Dataflow
 
 (def chat-client
-  {:models    {:outbound {:init {} :fn outbound-model}
-               :inbound  {:init {} :fn inbound-model}
-               :nickname {:init nil :fn nickname-model}}
-   :output    {:outbound send-message-to-server}
-   :views     {:new-messages      {:fn new-messages     :input #{:inbound :outbound}}
+  {:transform    {:outbound {:init {} :fn outbound-transform}
+               :inbound  {:init {} :fn inbound-transform}
+               :nickname {:init nil :fn nickname-transform}}
+   :effect    {:outbound send-message-to-server}
+   :combine     {:new-messages      {:fn new-messages     :input #{:inbound :outbound}}
                :updated-messages  {:fn updated-messages :input #{:outbound :new-messages}}
                :deleted-messages  {:fn deleted-messages :input #{:inbound :outbound}}}
-   :emitters  {:emitter  {:fn chat-emitter              :input #{:new-messages :deleted-messages :updated-messages :nickname}}}})
+   :emit  {:emit  {:fn chat-emit              :input #{:new-messages :deleted-messages :updated-messages :nickname}}}})

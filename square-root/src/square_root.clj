@@ -6,14 +6,14 @@
             [io.pedestal.app.messages :as msg]
             [io.pedestal.app.render :as render]))
 
-;; Create a model function which will be used for each of the three
-;; models. All inputs are numbers. The model doesn't do anything but
+;; Create a transform function which will be used for each of the three
+;; transforms. All inputs are numbers. The transform doesn't do anything but
 ;; return the number it was given.
 
-(defn number-model [old message]
+(defn number-transform [old message]
   (if (= (msg/type message) msg/init) (:value message) (:n message)))
 
-;; Create the functions which will be used as "views". Each of these is
+;; Create the functions which will be used as "combines". Each of these is
 ;; a pure function.
 
 (defn sum [state inputs]
@@ -47,10 +47,10 @@
                             :else new-guess)]
         {:good-enough? good-enough? :new-guess new-guess}))))
 
-;; Create an "feedback" function which will be used to generate new
+;; Create an "continue" function which will be used to generate new
 ;; messages which will cause the calculation to continue.
 
-(defn continue-calc [view-name o n]
+(defn continue-calc [combine-name o n]
   (when (not (or (:good-enough? n)
                  (= (:new-guess n) :NaN)))
     [{msg/topic :guess :n (:new-guess n)}]))
@@ -58,16 +58,16 @@
 ;; Configure the applcation.
 
 (def square-root-app
-  {:models  {:guess    {:init 0 :fn number-model}
-             :x        {:init 0 :fn number-model}
-             :accuracy {:init 0 :fn number-model}}
-   :views   {:divide       {:fn (divider :x :guess)
+  {:transform  {:guess    {:init 0 :fn number-transform}
+             :x        {:init 0 :fn number-transform}
+             :accuracy {:init 0 :fn number-transform}}
+   :combine   {:divide       {:fn (divider :x :guess)
                             :input #{:x :guess}}
              :sum          {:fn sum :input #{:guess :divide}}
              :half         {:fn half :input #{:sum}}
              :good-enough? {:fn good-enough? :input #{:half :accuracy}}}
-   :feedback {:good-enough? continue-calc}
-   :emitters {:answer {:fn default-emitter-fn :input #{:x :half}}}})
+   :continue {:good-enough? continue-calc}
+   :emit {:answer {:fn default-emitter-fn :input #{:x :half}}}})
 
 ;; Create a Renderer which will print to the console.
 
@@ -86,6 +86,8 @@
     app))
 
 (comment
+
+  (require '[io.pedestal.app.messages :as msg])
 
   ;; As new inputs are sent to the app, the UI deltas are printed.
   
