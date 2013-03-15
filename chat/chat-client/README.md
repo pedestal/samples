@@ -9,5 +9,5 @@ To learn more about configuring Logback, read its [documentation](http://logback
 
 ## Links
 
-* [Getting Started](https://github.com/relevance/platform/tree/master/client#usage)
-* [Overview of how pedestal-client applications work](https://github.com/relevance/platform/wiki/Client-Application-Model)
+* [Getting Started](http://pedestal.io/documentation/)
+* [Overview of how pedestal-client applications work](http://pedestal.io/documentation/application-overview/)
