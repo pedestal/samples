@@ -1,3 +1,13 @@
+## Description
+
+This is a sample app that demonstrates using a linker fn that
+generates a link based on your routing table.
+
+## Usage
+
+1. Start the application: `lein run`
+2. Go to [localhost:8080](http://localhost:8080/) to see a body with a link.
+
 Copyright
 ---------
 Copyright 2013 Relevance, Inc.
@@ -12,13 +22,3 @@ By using this software in any fashion, you are agreeing to be bound by
 the terms of this license.
 
 You must not remove this notice, or any other, from this software.
-
-## Description
-
-This is a sample app that demonstrates using a linker fn that
-generates a link based on your routing table.
-
-## Usage
-
-1. Start the application: `lein run`
-2. Go to [localhost:8080](http://localhost:8080/) to see a body with a link.
