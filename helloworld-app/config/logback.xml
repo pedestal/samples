@@ -10,7 +10,7 @@
 
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- rollover daily -->
-      <fileNamePattern>logs/helloworld-ui-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <fileNamePattern>logs/helloworld-app-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
       <timeBasedFileNamingAndTriggeringPolicy
           class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
         <!-- or whenever the file size reaches 64 MB -->
@@ -45,6 +45,6 @@
 
 
   <!-- For loggers in the ".*" namespace, log at all levels. -->
-  <logger name="helloworld-ui" level="INFO" />
+  <logger name="helloworld-app" level="INFO" />
   
 </configuration>

@@ -20,8 +20,8 @@ Included (in no particular order):
 To configure logging see config/logback.xml. By default, the app logs to stdout and /tmp/.
 To learn more about configuring Logback, read its [documentation](http://logback.qos.ch/documentation.html).
 
-## <a name="links"/>Links
-* [Other examples](https://github.com/relevance/platform/wiki/Hello-World-App)
+## Links
+* [Other examples](https://github.com/pedestal/samples)
 
 Copyright
 ---------
@@ -37,3 +37,5 @@ By using this software in any fashion, you are agreeing to be bound by
 the terms of this license.
 
 You must not remove this notice, or any other, from this software.
+
+
