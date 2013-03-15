@@ -2,8 +2,8 @@
 
 This sample includes a square-root calculator.
 
-For additional information on this sample, read the
-[Application Model](http://pedestal.io/documentation/application-model/) 
+Before starting on this sample, read the
+[Application Overview](http://pedestal.io/documentation/application-overview/)
 documentation. There are comments at the end of `square_root.clj` that 
 walk through using the sample inside a repl.
 
