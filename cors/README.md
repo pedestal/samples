@@ -6,6 +6,8 @@ In order to fully demonstrate this feature, we must start two running instances 
 page with embedded javascript is served from http://localhost:8080/js, and it consumes an SSE EventSource found at http://localhost:8081/.
 
 1. Start two instances on different ports: `lein run 8080` and `lein run 8081`
+1. Open the Javascript console, as all output from the sample will be
+   displayed there.
 1. Visit [localhost:8080/js](http://localhost:8080/js) to load the
    event consumer, and watch the JavaScript console. The inline JavaScript returned
    will attempt to access a service on port 8081, a different origin. If allowed,
@@ -28,7 +30,7 @@ To learn more about configuring Logback, read its [documentation](http://logback
 
 ## Links
 
-* [Other examples](https://github.com/relevance/platform/wiki/Hello-World-App)
+* [Other examples](http://pedestal.io/samples/)
 
 Copyright
 ---------
