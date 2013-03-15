@@ -12,6 +12,7 @@ You may start the application by running the following commands:
 lein repl
 (dev)
 (run)
+(watch :development)
 ```
 
 It is intended to work alongside the documentation here:
