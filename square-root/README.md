@@ -1,6 +1,6 @@
 # Square-root Sample
 
-This sample includes a a square-root calculator.
+This sample includes a square-root calculator.
 
 For additional information on this sample, read the
 [Application Model](http://pedestal.io/documentation/application-model/) 

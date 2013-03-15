@@ -47,7 +47,7 @@
                             :else new-guess)]
         {:good-enough? good-enough? :new-guess new-guess}))))
 
-;; Create an "continue" function which will be used to generate new
+;; Create a "continue" function which will be used to generate new
 ;; messages which will cause the calculation to continue.
 
 (defn continue-calc [combine-name o n]
@@ -55,7 +55,7 @@
                  (= (:new-guess n) :NaN)))
     [{msg/topic :guess :n (:new-guess n)}]))
 
-;; Configure the applcation.
+;; Configure the application.
 
 (def square-root-app
   {:transform  {:guess    {:init 0 :fn number-transform}
