@@ -1,4 +1,4 @@
-(defproject helloworld-ui "0.0.1-SNAPSHOT"
+(defproject helloworld-app "0.0.1-SNAPSHOT"
   :description "FIXME: write description"
   :dependencies [[org.clojure/clojure "1.5.0"]
                  [org.clojure/tools.namespace "0.2.1"]

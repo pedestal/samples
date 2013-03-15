@@ -54,7 +54,7 @@
   server will serve one application at a time. The default port is
   3000. The default application is :{{name}}."
   ([]
-     (run 3000 :helloworld-ui))
+     (run 3000 :helloworld-app))
   ([port config-name]
      (init port config-name)
      (start)))
