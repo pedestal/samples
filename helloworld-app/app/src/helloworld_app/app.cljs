@@ -16,7 +16,7 @@
   (dom/append! (dom/by-id "content")
                (str "<h1>" new-value " Hello Worlds</h1>")))
 
-(def count-app {:models {:count {:init 0 :fn count-model}}})
+(def count-app {:transform {:count {:init 0 :fn count-model}}})
 
 (defn receive-input [input-queue]
   (p/put-message input-queue {msg/topic :count msg/type :inc})
