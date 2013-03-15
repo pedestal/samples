@@ -59,13 +59,13 @@
 
 (def square-root-app
   {:transform  {:guess    {:init 0 :fn number-transform}
-             :x        {:init 0 :fn number-transform}
-             :accuracy {:init 0 :fn number-transform}}
+                :x        {:init 0 :fn number-transform}
+                :accuracy {:init 0 :fn number-transform}}
    :combine   {:divide       {:fn (divider :x :guess)
-                            :input #{:x :guess}}
-             :sum          {:fn sum :input #{:guess :divide}}
-             :half         {:fn half :input #{:sum}}
-             :good-enough? {:fn good-enough? :input #{:half :accuracy}}}
+                              :input #{:x :guess}}
+               :sum          {:fn sum :input #{:guess :divide}}
+               :half         {:fn half :input #{:sum}}
+               :good-enough? {:fn good-enough? :input #{:half :accuracy}}}
    :continue {:good-enough? continue-calc}
    :emit {:answer {:fn default-emitter-fn :input #{:x :half}}}})
 

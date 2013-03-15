@@ -10,7 +10,7 @@ walk through using the sample inside a repl.
 ## Getting Started
 
 * Start the repl with `lein repl`.
-* Use the `pedestal.app` and `pedestal.app.examples.square-root` namespaces:
+* Use the `io.pedestal.app` and `square-root` namespaces:
 
 ```clojure
 (use 'io.pedestal.app)
