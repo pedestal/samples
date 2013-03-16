@@ -30,7 +30,7 @@ To learn more about configuring Logback, read its [documentation](http://logback
 
 ## Links
 
-* [Other examples](http://pedestal.io/samples/)
+* [Other examples](https://github.com/pedestal/samples)
 
 Copyright
 ---------
