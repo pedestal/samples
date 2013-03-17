@@ -55,20 +55,8 @@
                  :credential-fn #(creds/bcrypt-credential-fn @users %)
                  :realm "Pedestal demo")]}))
 
-(defn about-page
-  [request]
-  (ring-resp/response (format "Clojure %s" (clojure-version))))
-
-(defn home-page
-  [request]
-  (ring-resp/response "Hello World!"))
-
 (defroutes routes
-  [[["/" {:get home-page}
-     ["/secure" ^:interceptors [session-interceptor friend-interceptor] {:get secure-page}]
-     ;; Set default interceptors for /about and any other paths under /
-     ^:interceptors [(body-params/body-params)]
-     ["/about" {:get about-page}]]]])
+  [[["/secure" ^:interceptors [session-interceptor friend-interceptor] {:get secure-page}]]])
 
 ;; You can use this fn or a per-request fn via io.pedestal.service.http.route/url-for
 (def url-for (route/url-for-routes routes))
