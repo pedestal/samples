@@ -59,6 +59,4 @@ outside existing SSE plumbing, e.g., to add CORS headers.
 smaller pieces that pedestal clients can build sse-interceptors out
 of.
 
-Copyright
----------
-Copyright 2013 Relevance, Inc.
+<!-- Copyright 2013 Relevance, Inc. -->

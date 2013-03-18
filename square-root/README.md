@@ -20,12 +20,10 @@ walk through using the sample inside a repl.
 * Walk through the code at the end of `square_root.clj`
 
 
-Copyright
----------
-Copyright 2013 Relevance, Inc.
-
 License
 -------
+Copyright 2013 Relevance, Inc.
+
 The use and distribution terms for this software are covered by the
 Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0)
 which can be found in the file epl-v10.html at the root of this distribution.
