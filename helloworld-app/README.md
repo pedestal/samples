@@ -14,4 +14,4 @@ Once it is started, browse to [http://localhost:3000/helloworld-app-dev.html](ht
 ## Links
 
 * [Pedestal Documentation](http://pedestal.io/documentation/)
-* [Pedestal Samples](http://pedestal.io/samples/)
+* [Pedestal Samples](http://pedestal.io/#sample)
