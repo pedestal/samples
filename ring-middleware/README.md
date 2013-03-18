@@ -31,7 +31,7 @@ For further enlightenment, take a look at:
 
 ## Configuration
 
-To configure logging see config/logback.xml. By default, the app logs to stdout and /tmp/.
+To configure logging see config/logback.xml. By default, the app logs to stdout and logs/.
 To learn more about configuring Logback, read its [documentation](http://logback.qos.ch/documentation.html).
 
 ## Links
