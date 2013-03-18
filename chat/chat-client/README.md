@@ -12,12 +12,11 @@ To learn more about configuring Logback, read its [documentation](http://logback
 * [Getting Started](http://pedestal.io/documentation/)
 * [Overview of how pedestal-client applications work](http://pedestal.io/documentation/application-overview/)
 
-Copyright
----------
-Copyright 2013 Relevance, Inc.
 
 License
 -------
+Copyright 2013 Relevance, Inc.
+
 The use and distribution terms for this software are covered by the
 Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0)
 which can be found in the file epl-v10.html at the root of this distribution.
