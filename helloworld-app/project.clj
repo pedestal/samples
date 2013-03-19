@@ -9,15 +9,15 @@
 ;
 ; You must not remove this notice, or any other, from this software.
 
-(defproject helloworld-app "0.1.0-SNAPSHOT"
+(defproject helloworld-app "0.1.0"
   :description "FIXME: write description"
   :dependencies [[org.clojure/clojure "1.5.0"]
                  [org.clojure/tools.namespace "0.2.1"]
                  [domina "1.0.1"]
                  [ch.qos.logback/logback-classic "1.0.6"]
                  [org.clojure/clojurescript "0.0-1450"]
-                 [io.pedestal/pedestal.app "0.1.0-SNAPSHOT"]
-                 [io.pedestal/pedestal.app-tools "0.1.0-SNAPSHOT"]]
+                 [io.pedestal/pedestal.app "0.1.0"]
+                 [io.pedestal/pedestal.app-tools "0.1.0"]]
   :profiles {:dev {:source-paths ["dev"]}}
   :source-paths ["app/src" "app/templates"]
   :resource-paths ["config"]
