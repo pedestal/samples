@@ -44,8 +44,7 @@
               (if-let [handler-map (:friend/handler-map response-or-handler-map)]
                 (assoc context :request (assoc request :friend/handler-map handler-map))
                 (assoc context :response response-or-handler-map))))
-   ;; TODO: response-fn-adapter needs to be public
-   :leave (@#'middlewares/response-fn-adapter friend/authenticate-response)))
+   :leave (middlewares/response-fn-adapter friend/authenticate-response)))
 
 (def friend-interceptor
   (friend-authenticate-interceptor
