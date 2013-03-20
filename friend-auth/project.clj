@@ -5,7 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.0"]
                  [io.pedestal/pedestal.service "0.1.0"]
-                 [com.cemerick/friend "0.1.4-SNAPSHOT"
+                 [com.cemerick/friend "0.1.5-SNAPSHOT"
                   :exclusions [ring/ring-core]]
 
                  ;; Remove this line and uncomment the next line to
