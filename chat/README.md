@@ -39,6 +39,8 @@ Use the interface to send a chat message, which you will see echoed to your loca
 
 If you play with a friend, you will both see each other's messages.
 
+**Note:** Your chat session with the server is cookie-based, so **you cannot chat with yourself with multiple browser tabs**. As an alternative, you **can** chat with yourself by using multiple browsers or Chrome's "Incognito Mode."
+
 
 License
 -------
