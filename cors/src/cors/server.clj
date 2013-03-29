@@ -24,7 +24,7 @@
                   (constantly (bootstrap/create-server (merge service/service opts)))))
 
 (defn -main [& args]
-  (create-server [::bootstrap/port (read-string (first args))])
+  (create-server [::bootstrap/port (Long/valueOf (first args))])
   (bootstrap/start service-instance))
 
 
