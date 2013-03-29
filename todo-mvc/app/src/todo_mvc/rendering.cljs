@@ -24,6 +24,9 @@
     :add-todo (dom-events/listen! (dom/by-id "new-todo")
                                   :keyup
                                   (add-todo-handler transform msgs transmitter))
+    :clear-completed (dom-events/listen! (dom/by-id "clear-completed")
+                                         :click
+                                         (clear-completed-todos-handler transform msgs transmitter))
     (log/error :in :enable-todo-transforms :unmatched transform)))
 
 (defn add-todo-handler [transform-name original-messages transmitter]
@@ -35,6 +38,12 @@
             messages (msg/fill transform-name original-messages {:content content})]
         (doseq [msg messages]
           (p/put-message transmitter msg))))))
+
+(defn clear-completed-todos-handler [transform-name original-messages transmitter]
+  (fn [e]
+   (let [messages (msg/fill transform-name original-messages)]
+     (doseq [msg messages]
+       (p/put-message transmitter msg)))))
 
 (defn create-todo-item [renderer [event path old new] transmitter]
   ;; At the moment this ID attachs to the first child of our todo li,
@@ -62,6 +71,10 @@
                             :click
                             (fn [_] (p/put-message transmitter msg)))))))
 
+(defn disable-clear-completed-event [renderer [_ path event msgs] transmitter]
+  (let [selector (str "//*[@id='clear-completed']")]
+    (dom-events/unlisten! (dom-xpath/xpath selector) :click)))
+
 (defn destroy-todo-item [renderer [event path] transmitter]
   (let [view-div-id (render/get-id renderer path)
         view-div (dom/by-id view-div-id)
@@ -73,6 +86,13 @@
 (defn create-count [r [_ path _]]
   (let [html (t/add-template r path (:count templates))]
     (dom/prepend! (dom/by-id "footer") (html {:number 0 :text "items"}))))
+
+(defn create-clear-completed [r [_ path _]]
+  (let [html (t/add-template r path (:clear-completed templates))]
+    (dom/append! (dom/by-id "footer") (html {:number 0}))))
+
+(defn destroy-clear-completed [_ _]
+  (dom/destroy! (dom/by-id "clear-completed")))
 
 (defn create-filter [r [_ path _]]
   (let [html (t/add-template r path (:filters templates))]
@@ -87,9 +107,13 @@
   [[:node-create      [] render-simple-page]
    ;; TODO: Split create-todo-item into node-create and value fns
    [:transform-enable [:todo] enable-todo-transforms]
+   [:transform-disable [:todo] disable-clear-completed-event]
    [:value            [:todo :*] create-todo-item]
    [:transform-enable [:todo :*] create-todo-item-event]
    [:node-destroy     [:todo :*] destroy-todo-item]
    [:node-create      [:count] create-count]
    [:value            [:count :*] update-count]
-   [:node-create      [:filters] create-filter]])
+   [:node-create      [:filters] create-filter]
+   [:node-create      [:clear-completed] create-clear-completed]
+   [:node-destroy     [:clear-completed] destroy-clear-completed]
+   [:value            [:clear-completed :*] update-count]])

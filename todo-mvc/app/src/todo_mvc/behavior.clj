@@ -97,9 +97,12 @@
 (defmethod emit-dispatch :completed-count [input changed-input]
   (let [count (changed-input input)]
     (cond
-     (< (:new count) 1)                          [[:transform-disable [:todo] :clear-completed]]
-     (and (> (:new count) 0) (> (:old count) 0)) []
-     (and (> (:new count) 0) (< (:old count) 1)) [[:transform-enable [:todo] :clear-completed [{msg/topic :todo}]]])))
+     (< (:new count) 1)                            [[:transform-disable [:todo] :clear-completed]
+                                                    [:node-destroy [:clear-completed]]]
+     (and (pos? (:new count)) (pos? (:old count))) [[:value [:clear-completed :number] (:new count)]]
+     (and (pos? (:new count)) (< (:old count) 1))  [[:node-create [:clear-completed]]
+                                                    [:value [:clear-completed :number] (:new count)]
+                                                    [:transform-enable [:todo] :clear-completed [{msg/topic :todo msg/type :clear-completed}]]])))
 
 (defmethod emit-dispatch :everything-completed? [input changed-input]
   (let [value (-> input changed-input :new)]
