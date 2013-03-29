@@ -24,4 +24,4 @@
     * Becomes unchecked if not all todos are checked.
 * Double clicking a todo's label begins editing that todo.
 * [X] Clear completed button shows the number of todos
-* [X] Clear completed button hides when there are no todoso
+* [X] Clear completed button hides when there are no todos
