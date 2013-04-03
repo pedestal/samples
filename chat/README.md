@@ -11,7 +11,7 @@ Prerequisite: all Pedestal libraries, both server and client, must be installed.
 
 To run from the `chat` directory...
 
-```
+```sh
 cd chat-client
 lein repl
 (dev)
@@ -19,7 +19,7 @@ lein repl
 ```
 Open another terminal, then:
 
-```
+```sh
 cd chat-server
 
 mkdir resources
