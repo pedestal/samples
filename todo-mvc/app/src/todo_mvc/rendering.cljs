@@ -27,6 +27,9 @@
     :clear-completed (dom-events/listen! (dom/by-id "clear-completed")
                                          :click
                                          (clear-completed-todos-handler transform msgs transmitter))
+    :toggle-all (dom-events/listen! (dom/by-id "toggle-all")
+                                         :click
+                                         (toggle-all-handler transform msgs transmitter))
     (log/error :in :enable-todo-transforms :unmatched transform)))
 
 (defn add-todo-handler [transform-name original-messages transmitter]
@@ -40,6 +43,12 @@
           (p/put-message transmitter msg))))))
 
 (defn clear-completed-todos-handler [transform-name original-messages transmitter]
+  (fn [e]
+   (let [messages (msg/fill transform-name original-messages)]
+     (doseq [msg messages]
+       (p/put-message transmitter msg)))))
+
+(defn toggle-all-handler [transform-name original-messages transmitter]
   (fn [e]
    (let [messages (msg/fill transform-name original-messages)]
      (doseq [msg messages]
@@ -103,11 +112,19 @@
         update-map (hash-map key (str new))]
     (t/update-parent-t r path update-map)))
 
+(defn everything-completed [r [event path _ old new]]
+  (if new
+    (dom/set-attr!    (dom/by-id "toggle-all") "checked" "checked")
+    (dom/remove-attr! (dom/by-id "toggle-all") :checked)))
+
+
 (defn render-config []
   [[:node-create      [] render-simple-page]
    ;; TODO: Split create-todo-item into node-create and value fns
    [:transform-enable [:todo] enable-todo-transforms]
+   [:transform-enable [:toggle-all] enable-todo-transforms]
    [:transform-disable [:todo] disable-clear-completed-event]
+   [:attr             [:todo] everything-completed]
    [:value            [:todo :*] create-todo-item]
    [:transform-enable [:todo :*] create-todo-item-event]
    [:node-destroy     [:todo :*] destroy-todo-item]
