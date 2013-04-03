@@ -36,7 +36,7 @@ lein repl
 (dev/start)  # Launch webserver on port 8080.
 ```
 
-In a browser, navigate to <http://localhost:8080/chat-client-dev>.html where you will see the chat client interface.
+In a browser, navigate to <http://localhost:8080/chat-client-dev.html> where you will see the chat client interface.
 
 Use the interface to send a chat message, which you will see echoed to your local screen.
 
