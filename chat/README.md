@@ -11,7 +11,7 @@ Prerequisite: all Pedestal libraries, both server and client, must be installed.
 
 To run from the `chat` directory...
 
-```
+```sh
 cd chat-client
 lein repl
 (dev)
@@ -19,13 +19,16 @@ lein repl
 ```
 Open another terminal, then:
 
-```
+```sh
 cd chat-server
 
 mkdir resources
 cd resources
 
 ln -s ../../chat-client/out/public
+
+# on windows: xcopy /e ..\chat-client\out\public .\resources\public
+
 cd ..
 
 lein repl
@@ -33,7 +36,7 @@ lein repl
 (dev/start)  # Launch webserver on port 8080.
 ```
 
-In a browser, navigate to http://localhost:8080/chat-client-dev.html where you will see the chat client interface.
+In a browser, navigate to <http://localhost:8080/chat-client-dev.html> where you will see the chat client interface.
 
 Use the interface to send a chat message, which you will see echoed to your local screen.
 
