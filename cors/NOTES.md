@@ -5,8 +5,8 @@ Cross Origin Resource Sharing Sample
 
 This sample app contains a working demonstration of both CORS and SSE
 running off of one page. In the test case, a static page with embedded
-javascript is served from http://localhost:8081/js, and it consumes an
-SSE EventSource found at http://localhost:8080/ . The sample has some
+javascript is served from http://localhost:8080/js, and it consumes an
+SSE EventSource found at http://localhost:8081/ . The sample has some
 rough edges that we'd like to improve before claiming Pedestal has a
 canonical SSE + CORS solution.
 
