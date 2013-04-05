@@ -62,7 +62,7 @@
               ;; default interceptors will be ignored.
               ;; :bootstrap/interceptors []
               ::bootstrap/routes routes
-              ::bootstrap/allowed-origins [#"localhost"]
+              ::bootstrap/allowed-origins ["http://localhost:8080"]
               ;; Root for resource interceptor that is available by default.
               ::bootstrap/resource-path "/public"
               ;; Choose from [:jetty :tomcat].

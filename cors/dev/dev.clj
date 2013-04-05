@@ -19,7 +19,7 @@
                  (merge  {:env :dev
                           ::bootstrap/join? false
                           ::bootstrap/routes #(deref #'service/routes)
-                          ::bootstrap/allowed-origins [#""]})
+                          ::bootstrap/allowed-origins (constantly true)})
                  (bootstrap/default-interceptors)
                  (bootstrap/dev-interceptors)))
 
