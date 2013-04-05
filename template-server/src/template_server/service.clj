@@ -22,14 +22,10 @@
             [comb.template :as comb]
             [clojure.string :as str]))
 
-(defn html-response
-  [html]
-  (ring-resp/content-type (ring-resp/response html) "text/html"))
-
 ;; The home page is just a plain html page.
 (defn home-page
   [request]
-  (html-response
+  (ring-resp/response
    (format "<html><body>%s<br/>%s</body></html>"
            "Each of the links below is rendered by a different templating library. Check them out:"
            (str "<ul>"
@@ -43,7 +39,7 @@
 
 (defn hiccup-page
   [request]
-  (html-response (page/html5 [:body [:p "Hello from Hiccup"]])))
+  (ring-resp/response (page/html5 [:body [:p "Hello from Hiccup"]])))
 
 ;; The /enlive page is done with enlive, plugging in
 ;; values for title and text. https://github.com/cgrand/enlive
@@ -56,7 +52,7 @@
 
 (defn enlive-page
   [request]
-  (html-response (apply str (enlive-template {:title "Enlive Demo Page"
+  (ring-resp/response (apply str (enlive-template {:title "Enlive Demo Page"
                                               :text "Hello from the Enlive demo page. Have a nice day!"
                                               :date (str (java.util.Date.))}))))
 
@@ -65,7 +61,7 @@
 
 (defn mustache-page
   [request]
-  (html-response (mustache/render-resource "public/mustache-template.html"
+  (ring-resp/response (mustache/render-resource "public/mustache-template.html"
                                                  {:title "Mustache Demo Page"
                                                   :text "Hello from the Mustache demo page. Have a great day!"
                                                   :date (str (java.util.Date.))})))
@@ -83,7 +79,7 @@
 (defn stringtemplate-page
   [request]
   (let [template (org.stringtemplate.v4.ST. template-string \{ \})]
-    (html-response (-> template
+    (ring-resp/response (-> template
                        (.add "name" "String Template")
                        (.render)))))
 
@@ -91,19 +87,19 @@
 ;; templating package. https://github.com/weavejester/comb
 
 (defn comb-page
-  [request]  
-  (html-response 
-  (comb/eval (slurp (io/resource "public/comb.html")) {:name "erb"})))
+  [request]
+  (ring-resp/response
+   (comb/eval (slurp (io/resource "public/comb.html")) {:name "erb"})))
 
 ;; Define the routes that pull everything together.
 
 (defroutes routes
-  [[["/" {:get home-page}]
-    ["/hiccup" {:get hiccup-page}]
-    ["/enlive"  {:get enlive-page}]
-    ["/mustache"  {:get mustache-page}]
-    ["/stringtemplate"  {:get stringtemplate-page}]
-    ["/comb" {:get comb-page}]]])
+  [[["/" {:get home-page} ^:interceptors [bootstrap/html-body]
+     ["/hiccup" {:get hiccup-page}]
+     ["/enlive"  {:get enlive-page}]
+     ["/mustache"  {:get mustache-page}]
+     ["/stringtemplate"  {:get stringtemplate-page}]
+     ["/comb" {:get comb-page}]]]])
 
 ;; You can use this fn or a per-request fn via io.pedestal.service.http.route/url-for
 (def url-for (route/url-for-routes routes))
