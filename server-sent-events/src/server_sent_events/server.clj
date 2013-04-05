@@ -25,7 +25,9 @@
                   (constantly (bootstrap/create-server (merge service/service opts)))))
 
 (defn -main [& args]
+  (println "Creating server...")
   (create-server)
+  (println "Server created. Awaiting connections.")
   (bootstrap/start service-instance))
 
 
