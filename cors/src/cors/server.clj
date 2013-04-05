@@ -24,8 +24,11 @@
                   (constantly (bootstrap/create-server (merge service/service opts)))))
 
 (defn -main [& args]
-  (create-server [::bootstrap/port (Long/valueOf (first args))])
-  (bootstrap/start service-instance))
+  (let [port (Long/valueOf (first args))]
+    (println "Creating server...")
+    (create-server [::bootstrap/port port])
+    (println (str "Server created. Awaiting connections on port " port))
+    (bootstrap/start service-instance)))
 
 
 ;; Container prod mode for use with the pedestal.servlet.ClojureVarServlet class.
