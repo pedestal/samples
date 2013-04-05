@@ -19,7 +19,7 @@
   :plugins [[lein-immutant "0.18.0"]]
   :immutant  {;:init immutant/init
               :resolve-dependencies true
-              :context-path "/"}  
+              :context-path "/foo"}
   :profiles {:dev {:source-paths ["dev"]}}
   :min-lein-version "2.0.0"
   :resource-paths ["config"]

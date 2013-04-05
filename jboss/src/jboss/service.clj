@@ -7,11 +7,15 @@
 
 (defn about-page
   [request]
-  (ring-resp/response (format "Clojure %s" (clojure-version))))
+  (ring-resp/response (-> request
+                          (select-keys  [:context-path :servlet-path :path-info :uri])
+                          (merge {:url-for (route/url-for ::about-page)}))))
 
 (defn home-page
   [request]
-  (ring-resp/response "Hello World!"))
+  (ring-resp/response (-> request
+                          (select-keys  [:context-path :servlet-path :path-info :uri])
+                          (merge {:url-for (route/url-for ::home-page)}))))
 
 (defroutes routes
   [[["/" {:get home-page}
