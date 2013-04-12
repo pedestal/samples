@@ -5,17 +5,21 @@
               [io.pedestal.service.http.route.definition :refer [defroutes]]
               [ring.util.response :as ring-resp]))
 
+(declare url-for)
+
 (defn about-page
   [request]
   (ring-resp/response (-> request
                           (select-keys  [:context-path :servlet-path :path-info :uri])
-                          (merge {:url-for (route/url-for ::about-page)}))))
+                          (merge {::route/url-for (route/url-for ::about-page)
+                                  ::url-for (url-for ::about-page)}))))
 
 (defn home-page
   [request]
   (ring-resp/response (-> request
                           (select-keys  [:context-path :servlet-path :path-info :uri])
-                          (merge {:url-for (route/url-for ::home-page)}))))
+                          (merge {::route/url-for (route/url-for ::home-page)
+                                  ::url-for (url-for ::home-page)}))))
 
 (defroutes routes
   [[["/" {:get home-page}
@@ -24,7 +28,9 @@
      ["/about" {:get about-page}]]]])
 
 ;; You can use this fn or a per-request fn via io.pedestal.service.http.route/url-for
-(def url-for (route/url-for-routes routes))
+(defn init-url-for
+  [& context]
+  (def url-for (route/url-for-routes routes :context context)))
 
 ;; Consumed by jboss.server/create-server
 (def service {:env :prod
@@ -51,3 +57,4 @@
               ;;::bootstrap/host "localhost"
               ::bootstrap/type :jetty
               ::bootstrap/port 8080})
+

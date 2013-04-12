@@ -3,8 +3,11 @@
               [io.pedestal.service.http :as http]
               [jboss.service :as service]))
 
-(web/start-servlet "/"
-                   (::http/servlet (http/create-servlet service/service)))
+(def servlet (::http/servlet (http/create-servlet service/service)))
+
+(web/start-servlet "/" servlet)
+
+;;(service/init-url-for (.. servlet getServletContext getContextPath))
 
 
 
