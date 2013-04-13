@@ -28,9 +28,11 @@
      ["/about" {:get about-page}]]]])
 
 ;; You can use this fn or a per-request fn via io.pedestal.service.http.route/url-for
-(defn init-url-for
+#_(defn init-url-for
   [& context]
   (def url-for (route/url-for-routes routes :context context)))
+
+(def url-for (route/url-for-routes routes :context 'immutant.init/get-context))
 
 ;; Consumed by jboss.server/create-server
 (def service {:env :prod
