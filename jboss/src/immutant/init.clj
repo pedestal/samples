@@ -1,19 +1,14 @@
 (ns immutant.init
     (:require [immutant.web :as web]
-              [io.pedestal.service.http :as http]
+              [io.pedestal.service.http :as bootstrap]
               [io.pedestal.service.log :as log]
-              [jboss.service :as service]))
+              [jboss.service :as service]
+              [jboss.server :as server]))
 
-(def servlet (::http/servlet (http/create-servlet service/service)))
-
-(defn get-context
-  []
-  (let [context (.getServletContext servlet)
-        context-path (when context (.getContextPath context))]
-    (log/info :in ::get-context
-              :context context
-              :context-path context-path)
-    context-path))
+(let [servlet-map (bootstrap/create-servlet service/service)]
+  (alter-var-root #'server/service-instance (constantly servlet-map))
+  (def servlet (::bootstrap/servlet servlet-map))
+)
 
 (web/start-servlet "/" servlet)
 

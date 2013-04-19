@@ -27,12 +27,13 @@
      ^:interceptors [(body-params/body-params)]
      ["/about" {:get about-page}]]]])
 
-;; You can use this fn or a per-request fn via io.pedestal.service.http.route/url-for
-#_(defn init-url-for
-  [& context]
-  (def url-for (route/url-for-routes routes :context context)))
-
-(def url-for (route/url-for-routes routes :context 'immutant.init/get-context))
+;; You can use this fn or a per-request fn via
+;; io.pedestal.service.http.route/url-for Note that for integration
+;; with immutant, we pass as a :context a symbol that resolves to a
+;; function that returns the current servlet context. You can also
+;; pass a function directly, a symbol is used here so that the code
+;; does not have to be refactored to avoid a circular reference
+(def url-for (route/url-for-routes routes :context 'jboss.server/get-context))
 
 ;; Consumed by jboss.server/create-server
 (def service {:env :prod

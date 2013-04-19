@@ -12,9 +12,6 @@
   (let [servlet (::bootstrap/servlet service-instance)
         context (.getServletContext servlet)
         context-path (when context (.getContextPath context))]
-    (log/info :in :get-context
-              :context context
-              :context-path context-path)
     context-path))
 
 (defn create-server
@@ -25,9 +22,7 @@
 
 (defn -main [& args]
   (create-server)
-  (bootstrap/start service-instance)
-;;  (service/init-url-for (get-context))
-  )
+  (bootstrap/start service-instance))
 
 
 ;; Container prod mode for use with the io.pedestal.servlet.ClojureVarServlet class.
