@@ -163,11 +163,12 @@
 ;; Dataflow
 
 (def chat-client
-  {:transform    {:outbound {:init {} :fn outbound-transform}
-               :inbound  {:init {} :fn inbound-transform}
-               :nickname {:init nil :fn nickname-transform}}
-   :effect    {:outbound send-message-to-server}
-   :combine     {:new-messages      {:fn new-messages     :input #{:inbound :outbound}}
-               :updated-messages  {:fn updated-messages :input #{:outbound :new-messages}}
-               :deleted-messages  {:fn deleted-messages :input #{:inbound :outbound}}}
-   :emit  {:emit  {:fn chat-emit              :input #{:new-messages :deleted-messages :updated-messages :nickname}}}})
+  (app/adapt-v1
+   {:transform {:outbound {:init {} :fn outbound-transform}
+                :inbound  {:init {} :fn inbound-transform}
+                :nickname {:init nil :fn nickname-transform}}
+    :effect  {:outbound send-message-to-server}
+    :combine {:new-messages      {:fn new-messages     :input #{:inbound :outbound}}
+              :updated-messages  {:fn updated-messages :input #{:outbound :new-messages}}
+              :deleted-messages  {:fn deleted-messages :input #{:inbound :outbound}}}
+    :emit  {:emit {:fn chat-emit :input #{:new-messages :deleted-messages :updated-messages :nickname}}}}))
