@@ -11,7 +11,6 @@
 
 (ns ^:shared chat-client.behavior
   (:require [clojure.set :as set]
-            [io.pedestal.app :as app]
             [io.pedestal.app.messages :as msg]
             [io.pedestal.app.util.platform :as platform]
             [io.pedestal.app.util.log :as log]
@@ -163,12 +162,11 @@
 ;; Dataflow
 
 (def chat-client
-  (app/adapt-v1
-   {:transform {:outbound {:init {} :fn outbound-transform}
-                :inbound  {:init {} :fn inbound-transform}
-                :nickname {:init nil :fn nickname-transform}}
-    :effect  {:outbound send-message-to-server}
-    :combine {:new-messages      {:fn new-messages     :input #{:inbound :outbound}}
-              :updated-messages  {:fn updated-messages :input #{:outbound :new-messages}}
-              :deleted-messages  {:fn deleted-messages :input #{:inbound :outbound}}}
-    :emit  {:emit {:fn chat-emit :input #{:new-messages :deleted-messages :updated-messages :nickname}}}}))
+  {:transform {:outbound {:init {} :fn outbound-transform}
+               :inbound  {:init {} :fn inbound-transform}
+               :nickname {:init nil :fn nickname-transform}}
+   :effect  {:outbound send-message-to-server}
+   :combine {:new-messages      {:fn new-messages     :input #{:inbound :outbound}}
+             :updated-messages  {:fn updated-messages :input #{:outbound :new-messages}}
+             :deleted-messages  {:fn deleted-messages :input #{:inbound :outbound}}}
+   :emit  {:emit {:fn chat-emit :input #{:new-messages :deleted-messages :updated-messages :nickname}}}})
