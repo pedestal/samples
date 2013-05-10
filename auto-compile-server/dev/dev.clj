@@ -1,5 +1,6 @@
 (ns dev
   (:require [io.pedestal.service.http :as bootstrap]
+            [io.pedestal.service.log :as log]
             [auto-compile-server.service :as service]
             [auto-compile-server.server :as server]
             [ns-tracker.core :as tracker]))
@@ -29,28 +30,24 @@
   (stop)
   (start))
 
-(defn check-namespace-changes [track]
+(defn- watch* [track]
  (try
    (doseq [ns-sym (track)]
-     (require ns-sym :reload)
-     (compile ns-sym))
+     (log/info :reload ns-sym)
+     (require ns-sym :reload))
    (catch Throwable e (.printStackTrace e)))
    (Thread/sleep 500))
  
-(defn start-nstracker []
-  (let [track (tracker/ns-tracker ["src"])
-        compile-path *compile-path*]
-    (doto
-        (Thread.
-         (fn []
-           (binding [*compile-path* compile-path]
-             (println "THREAD" *compile-path*)
-             (while true
-               (check-namespace-changes track)))))
-      (.setDaemon true)
-      (.start))))
+(defn watch
+  ([] (watch ["src"]))
+  ([src-paths]
+     (let [track (tracker/ns-tracker src-paths)]
+       (doto
+           (Thread. (fn [] (while true (watch* track))))
+         (.setDaemon true)
+         (.start)))))
 
 (defn -main [& args]
   (println *compile-path*)
   (start)
-  (start-nstracker))
+  (watch))
