@@ -1,0 +1,29 @@
+<_within file="application.html">
+
+  <div id="content">
+    
+    <div template="tutorial" field="id:id">
+      
+      <div>
+        <button class="btn btn-success" id="inc-button">Increment Counter</button>
+      </div>
+
+      <div class="message">
+        Counter: <span field="content:my-counter">40</span>
+      </div>
+
+      <div class="message">
+        Avg: <span field="content:avg">25</span>
+      </div>
+
+      <div id="other-counters">
+        <div template="other-counter" class="message" field="id:id">
+          Counter for <span field="content:counter-id">x</span>: <span field="content:count">10</span>
+        </div>
+      </div>
+      
+    </div>
+
+  </div>
+
+</_within>
