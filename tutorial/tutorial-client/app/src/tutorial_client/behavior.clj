@@ -17,13 +17,20 @@
 (defn init-emitter [_]
   [[:transform-enable [:tutorial] :increment-counter [{msg/type :inc msg/topic [:my-counter]}]]])
 
+(defn publish-counter [inputs]
+  [{msg/type :set-value
+    msg/topic [:other-counters]
+    :value (dataflow/single-val inputs)}])
+
 (def example-app
   {:version 2
-   
+
    :transform [[:inc [:my-counter] inc-transform]
                [:set-value [:other-counters :*] value-transform]]
-   
+
    :derive #{[#{[:my-counter] [:other-counters :*]} [:avg] avg-count]}
-   
+
+   :effect #{[#{[:my-counter]} publish-counter]}
+
    :emit [[#{[:other-counters :*]} (app/default-emitter :tutorial)]
           {:in #{[:*]} :fn (app/default-emitter :tutorial) :init init-emitter}]})

@@ -8,7 +8,8 @@
             :triggers {:html [#"tutorial_client/rendering.js"]}}
     :application {:generated-javascript "generated-js"
                   :default-template "application.html"
-                  :output-root :public}
+                  :output-root :public
+                  :api-server {:host "localhost" :port 8080 :log-fn nil}}
     :control-panel {:design {:uri "/design.html"
                              :name "Design"
                              :order 0}}
@@ -34,6 +35,7 @@
                    :logging? true
                    :output-root :tools-public}
               :development {:uri "/tutorial-client-dev.html"
+                            :use-api-server? true
                             :name "Development"
                             :out-file "tutorial-client-dev.js"
                             :main 'tutorial_client.start
@@ -46,6 +48,7 @@
                       :order 4
                       :output-root :tools-public}
               :production {:uri "/tutorial-client.html"
+                           :use-api-server? true
                            :name "Production"
                            :optimizations :advanced
                            :out-file "tutorial-client.js"

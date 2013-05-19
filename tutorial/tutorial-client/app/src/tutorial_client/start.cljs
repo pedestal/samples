@@ -5,7 +5,7 @@
             [io.pedestal.app.render :as render]
             [tutorial-client.behavior :as behavior]
             [tutorial-client.rendering :as rendering]
-            [io.pedestal.app.messages :as msg]))
+            [tutorial-client.services :as services]))
 
 (defn create-app [render-config]
   (let [app (app/build behavior/example-app)
@@ -15,4 +15,8 @@
     {:app app :app-model app-model}))
 
 (defn ^:export main []
-  (create-app (rendering/render-config)))
+  (let [app (create-app (rendering/render-config))
+        services (services/->Services (:app app))]
+    (app/consume-effects (:app app) services/services-fn)
+    (p/start services)
+    app))
