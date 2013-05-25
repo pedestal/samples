@@ -16,7 +16,8 @@
     :built-in {:render {:dir "tutorial-client"
                         :renderer 'tutorial_client.rendering
                         :logging? true
-                        :order 2}}
+                        :order 2
+                        :menu-template "tooling.html"}}
     :aspects {:data-ui {:uri "/tutorial-client-data-ui.html"
                         :name "Data UI"
                         :params "renderer=auto"
@@ -25,7 +26,8 @@
                         :main 'tutorial_client.simulated.start
                         :recording? true
                         :logging? true
-                        :output-root :tools-public}
+                        :output-root :tools-public
+                        :template "tooling.html"}
               :ui {:uri "/tutorial-client-dev-ui.html"
                    :name "UI"
                    :order 2
@@ -46,7 +48,8 @@
                       :out-file "fresh.js"
                       :main 'io.pedestal.app.net.repl_client
                       :order 4
-                      :output-root :tools-public}
+                      :output-root :tools-public
+                      :template "tooling.html"}
               :production {:uri "/tutorial-client.html"
                            :use-api-server? true
                            :name "Production"
