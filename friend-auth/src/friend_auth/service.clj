@@ -7,6 +7,7 @@
               [io.pedestal.service.interceptor :refer [definterceptorfn definterceptor interceptor]]
               [ring.util.response :as ring-resp]
               [ring.middleware.session.cookie :as cookie]
+              [clojure.java.io :as io]
               [cemerick.friend :as friend]
               (cemerick.friend [workflows :as workflows]
                                [credentials :as creds])))
@@ -54,8 +55,14 @@
                  :credential-fn #(creds/bcrypt-credential-fn @users %)
                  :realm "Pedestal demo")]}))
 
+(defn home-page
+  [req]
+  (-> "public/index.html" io/resource slurp ring-resp/response))
+
 (defroutes routes
-  [[["/secure" ^:interceptors [session-interceptor friend-interceptor] {:get secure-page}]]])
+  [[["/" {:get home-page}
+     ^:interceptors [body-params/body-params bootstrap/html-body]
+    ["/secure" ^:interceptors [session-interceptor friend-interceptor] {:get secure-page}]]]])
 
 ;; You can use this fn or a per-request fn via io.pedestal.service.http.route/url-for
 (def url-for (route/url-for-routes routes))
@@ -70,7 +77,6 @@
               ::bootstrap/routes routes
               ;; Root for resource interceptor that is available by default.
               ::bootstrap/resource-path "/public"
-              ::bootstrap/file-path "resources/public"
               ;; Either :jetty or :tomcat (see comments in project.clj
               ;; to enable Tomcat)
               ::bootstrap/type :jetty
