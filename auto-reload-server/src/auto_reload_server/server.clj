@@ -1,10 +1,11 @@
-(ns auto-compile-server.server
+(ns auto-reload-server.server
   (:gen-class) ; for -main method in uberjar
-  (:require [auto-compile-server.service :as service]
+  (:require [auto-reload-server.service :as service]
             [io.pedestal.service.http :as bootstrap]))
 
-(defonce service-instance nil)
-
+(def service-instance
+  "Global var to hold service instance."
+  nil)
 
 (defn create-server
   "Standalone dev/prod mode."

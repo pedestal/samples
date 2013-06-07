@@ -1,8 +1,7 @@
 (ns dev
   (:require [io.pedestal.service.http :as bootstrap]
-            [io.pedestal.service.log :as log]
-            [auto-compile-server.service :as service]
-            [auto-compile-server.server :as server]
+            [auto-reload-server.service :as service]
+            [auto-reload-server.server :as server]
             [ns-tracker.core :as tracker]))
 
 (def service (-> service/service ;; start with production configuration
@@ -30,24 +29,33 @@
   (stop)
   (start))
 
-(defn- watch* [track]
+(defn- ns-reload [track]
  (try
    (doseq [ns-sym (track)]
-     (log/info :reload ns-sym)
      (require ns-sym :reload))
-   (catch Throwable e (.printStackTrace e)))
-   (Thread/sleep 500))
+   (catch Throwable e (.printStackTrace e))))
  
+(def ^:private ^:dynamic *unwatch* nil)
+
+(defn unwatch
+  []
+  (when *unwatch* (*unwatch*)))
+
 (defn watch
   ([] (watch ["src"]))
   ([src-paths]
-     (let [track (tracker/ns-tracker src-paths)]
+     (let [track (tracker/ns-tracker src-paths)
+           done (atom false)]
+       (unwatch)
+       (alter-var-root #'*unwatch* (constantly (fn [] (swap! done not))))
        (doto
-           (Thread. (fn [] (while true (watch* track))))
+           (Thread. (fn []
+                      (while (not @done)
+                        (ns-reload track)
+                        (Thread/sleep 500))))
          (.setDaemon true)
          (.start)))))
 
 (defn -main [& args]
-  (println *compile-path*)
   (start)
   (watch))
