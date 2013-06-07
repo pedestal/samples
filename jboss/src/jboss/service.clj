@@ -5,35 +5,23 @@
               [io.pedestal.service.http.route.definition :refer [defroutes]]
               [ring.util.response :as ring-resp]))
 
-(declare url-for)
-
 (defn about-page
   [request]
   (ring-resp/response (-> request
                           (select-keys  [:context-path :servlet-path :path-info :uri])
-                          (merge {::route/url-for (route/url-for ::about-page)
-                                  ::url-for (url-for ::about-page)}))))
+                          (merge {::route/url-for (route/url-for ::about-page)}))))
 
 (defn home-page
   [request]
   (ring-resp/response (-> request
                           (select-keys  [:context-path :servlet-path :path-info :uri])
-                          (merge {::route/url-for (route/url-for ::home-page)
-                                  ::url-for (url-for ::home-page)}))))
+                          (merge {::route/url-for (route/url-for ::home-page)}))))
 
 (defroutes routes
   [[["/" {:get home-page}
      ;; Set default interceptors for /about and any other paths under /
      ^:interceptors [(body-params/body-params)]
      ["/about" {:get about-page}]]]])
-
-;; You can use this fn or a per-request fn via
-;; io.pedestal.service.http.route/url-for Note that for integration
-;; with immutant, we pass as a :context a symbol that resolves to a
-;; function that returns the current servlet context. You can also
-;; pass a function directly, a symbol is used here so that the code
-;; does not have to be refactored to avoid a circular reference
-(def url-for (route/url-for-routes routes :context 'jboss.server/get-context))
 
 ;; Consumed by jboss.server/create-server
 (def service {:env :prod
