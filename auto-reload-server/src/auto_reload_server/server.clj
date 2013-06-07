@@ -3,9 +3,7 @@
   (:require [auto-reload-server.service :as service]
             [io.pedestal.service.http :as bootstrap]))
 
-(def service-instance
-  "Global var to hold service instance."
-  nil)
+(defonce service-instance nil)
 
 (defn create-server
   "Standalone dev/prod mode."
