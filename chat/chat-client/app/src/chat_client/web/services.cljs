@@ -50,7 +50,7 @@
 (defrecord Services [app]
   p/Activity
   (start [this]
-    (let [source (js/window.EventSource. "/msgs")]
+    (let [source (js/EventSource. "/msgs")]
       (.addEventListener source
                          "msg"
                          (fn [e]
