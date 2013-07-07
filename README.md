@@ -11,7 +11,7 @@ motivations and concepts](https://raw.github.com/pedestal/samples/master/slides/
 
 ## Samples
 
-* [helloworld\_app](./helloworld_app), a simple example (a counter) that
+* [helloworld-app](./helloworld-app), a simple example (a counter) that
     introduces how state is handled in pedestal, how templates work (a
     bit) and pedestal handles updates and rendering
 * [auto-reload-server](./auto-reload-server) uses
