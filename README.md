@@ -31,9 +31,3 @@ motivations and concepts](https://raw.github.com/pedestal/samples/master/slides/
     template engines with pedestal
 * [chat](./chat), a client-server chat that demonstrates many features
     of pedestal
-
-## Documentation
-
-Have a look at the [official documentation](http://pedestal.io/documentation)
-or generate the annotated source using `lein marg` (after you've [set up
-marginalia](https://github.com/fogus/lein-marginalia/#installation)).
