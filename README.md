@@ -35,4 +35,5 @@ motivations and concepts](https://raw.github.com/pedestal/samples/master/slides/
 ## Documentation
 
 Have a look at the [official documentation](http://pedestal.io/documentation)
-or [generate the annotated source](http://pedestal.io/documentation/).
+or generate the annotated source using `lein marg` (after you've [set up
+marginalia](https://github.com/fogus/lein-marginalia/#installation)).
