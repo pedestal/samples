@@ -11,23 +11,25 @@ motivations and concepts](https://raw.github.com/pedestal/samples/master/slides/
 
 ## Samples
 
-* [helloworld-app](./helloworld-app), a simple example (a counter) that
-    introduces how state is handled in pedestal, how templates work (a
-    bit) and pedestal handles updates and rendering
-* [auto-reload-server](./auto-reload-server) uses
-    [ns-tracker](https://github.com/weavejester/ns-tracker) to reload
+* [helloworld-app](./helloworld-app), a simple pedestal app (a counter)
+    that demonstrates how state is handled, how templates work (a bit)
+    and how updates and rendering are handled
+* [auto-reload-server](./auto-reload-server), a pedestal service that
+    uses [ns-tracker](https://github.com/weavejester/ns-tracker) to reload
     changed code
 * [cors](./cors)
-* [jboss](./jboss) is a service that can be deployed in [JBoss](http://jboss.org)
-* [ring-middleware](./ring-middleware) shows how to use
-    [ring](https://github.com/ring-clojure/ring) middlewares with
-    pedestal
+* [jboss](./jboss), a pedestal service that can be deployed in
+    [JBoss](http://jboss.org)
+* [ring-middleware](./ring-middleware), shows how to use
+    [ring](https://github.com/ring-clojure/ring) middlewares with pedestal
+    services
 * [server-sent-events](./server-sent-events)
-* [server-with-links](./server-with-links) demonstrates links generated
-    from routes
-* [square-root](./square-root) implements the square root in terms of
-    pedestal's primitives
-* [template-server](./template-server) shows how to use different
-    template engines with pedestal
+* [server-with-links](./server-with-links), a pedestal service that
+    demonstrates links generated from routes
+* [square-root](./square-root), a pedestal app that implements the
+    square root in terms of pedestal's primitives
+* [template-server](./template-server), a pedestal service that shows
+    how to use different template engines
 * [chat](./chat), a client-server chat that demonstrates many features
-    of pedestal
+    of pedestal, it consists of both a pedestal service (message
+    federation) and a pedestal app (ui)
