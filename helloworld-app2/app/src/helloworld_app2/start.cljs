@@ -4,7 +4,6 @@
             [io.pedestal.app.render.push :as push-render]
             [io.pedestal.app.render :as render]
             [io.pedestal.app.messages :as msg]
-            [helloworld-app2.rendering :as rendering]
             [domina :as dom]))
 
 (defn inc-transform [old-value _]
@@ -30,7 +29,8 @@
   (dom/append! (dom/by-id "content")
                (str "<h1>" new-value " Hello Worlds</h1>")))
 
-(def render-config [[:value [:**] render-value]])
+(defn render-config []
+  [[:value [:**] render-value]])
 
 (defn ^:export main []
-  (create-app render-config))
+  (create-app (render-config)))

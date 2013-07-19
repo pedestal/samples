@@ -19,7 +19,8 @@
             ;; any files which use macros to read in templates. This
             ;; will force recompilation of these files and update
             ;; the templates.
-            :triggers {:html [#"helloworld_app2/rendering.js"]}}
+            ;:triggers {:html [#"helloworld_app2/rendering.js"]}
+            }
     ;; General application level configuration
     :application {;; The directory where all generated JavaScript for
                   ;; this application will be written.
@@ -49,7 +50,7 @@
                         ;; to use. This namespace must have a
                         ;; `render-config` function which returns a
                         ;; render configuration.
-                        :renderer 'helloworld_app2.rendering
+                        :renderer 'helloworld_app2.start
                         ;; Enable logging of rendering data when in
                         ;; this view.
                         :logging? true
