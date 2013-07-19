@@ -1,4 +1,4 @@
-(ns helloworld-app2.start
+(ns helloworld-app.start
   (:require [io.pedestal.app.protocols :as p]
             [io.pedestal.app :as app]
             [io.pedestal.app.render.push :as push-render]

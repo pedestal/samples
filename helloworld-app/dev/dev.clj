@@ -1,14 +1,3 @@
-; Copyright 2013 Relevance, Inc.
-
-; The use and distribution terms for this software are covered by the
-; Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0)
-; which can be found in the file epl-v10.html at the root of this distribution.
-;
-; By using this software in any fashion, you are agreeing to be bound by
-; the terms of this license.
-;
-; You must not remove this notice, or any other, from this software.
-
 (ns dev
   (:use [cljs.repl :only [repl]]
         [cljs.repl.browser :only [repl-env]])
@@ -37,17 +26,6 @@
   []
   (repl (repl-env)))
 
-(defn start
-  "Start the current application development server."
-  []
-  ((:start-fn app-development-server))
-  :ok)
-
-(defn stop
-  "Stop the current application development server."
-  []
-  ((:stop-fn app-development-server)))
-
 (defn init
   "Create a new app development server and ensure that required
   directories exist."
@@ -60,15 +38,21 @@
                                             (server/app-development-server
                                              port (get config/configs config-name)))))
 
-(defn run
+(defn start
   "Initialize and start an application development web server. The
   server will serve one application at a time. The default port is
-  3000. The default application is :{{name}}."
+  3000. The default application is the first of config/configs."
   ([]
-     (run 3000 :helloworld-app))
+     (start 3000 (ffirst config/configs)))
   ([port config-name]
      (init port config-name)
-     (start)))
+     ((:start-fn app-development-server))
+     :ok))
+
+(defn stop
+  "Stop the current application development server."
+  []
+  ((:stop-fn app-development-server)))
 
 (def ^{:doc "Compile JavaScript for this project. Pass an applicaiton name to compile
   all aspects of an application."}
@@ -96,11 +80,20 @@
      (watch (vec (keys config/configs)) aspect))
   ([config-names aspect]
      (assert (vector? config-names) "config-names must be a vector")
-     (println "watching" config-names "/" aspect)
-     (let [w (build/watcher (vals (select-keys config/configs config-names)) aspect)]
-       ((:start-fn w))
-       (alter-var-root #'watcher (constantly w))
-       :ok)))
+     (let [configs (select-keys config/configs config-names)
+           missing-aspect (reduce (fn [a [k v]]
+                                    (if (contains? (:aspects v) aspect)
+                                      a
+                                      (conj a k)))
+                                  []
+                                  configs)]
+       (if (seq missing-aspect)
+         (println (str "Error: the configs " missing-aspect " do not contain a " aspect " aspect."))
+         (do (println "watching" config-names "/" aspect)
+             (let [w (build/watcher (vals configs) aspect)]
+               ((:start-fn w))
+               (alter-var-root #'watcher (constantly w))
+               :ok))))))
 
 (defn unwatch
   "Stop the currently running watcher."
@@ -115,11 +108,10 @@
   "Show basic help for each function in this namespace."
   []
   (println)
-  (println "Start a new app development server with (run) or (run port config)")
+  (println "Start a new app development server with (start) or (start port config)")
   (println "Type (cljs-repl) to start a ClojureScript REPL")
   (println "----")
-  (println "Type (init port) or (init port config) to create a app development server")
-  (println "Type (start) to start the current server")
+  (println "Type (start) or (start port config) to initialize and start a server")
   (println "Type (stop) to stop the current server")
   (println "----")
   (println "Type (watch aspect) to build a specific aspect when it changes")
