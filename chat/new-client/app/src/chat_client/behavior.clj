@@ -16,21 +16,24 @@
       {:clear-messages [{msg/topic [:outbound]} {msg/topic [:inbound]}]
        :set-nickname [{msg/topic [:nickname] (msg/param :nickname) {}}]}}}}])
 
-(defn- nickname-deltas [nickname]
-  (if nickname
-    [[:node-create [:chat :nickname] :map]
-     [:value [:chat :nickname] nickname]
-     [:transform-enable [:chat :form] :clear-nickname [{msg/topic [:nickname]}]]
-     [:transform-enable [:chat :form] :send-message [{msg/topic [:outbound]
-                                                      (msg/param :text) {}
-                                                      :nickname nickname}]]
-     [:transform-disable [:chat :form] :set-nickname]]
+(defn set-nickname-deltas
+  [nickname]
+  [[:node-create [:chat :nickname] :map]
+   [:value [:chat :nickname] nickname]
+   [:transform-enable [:chat :form] :clear-nickname [{msg/topic [:nickname]}]]
+   [:transform-enable [:chat :form] :send-message [{msg/topic [:outbound]
+                                                    (msg/param :text) {}
+                                                    :nickname nickname}]]
+   [:transform-disable [:chat :form] :set-nickname]])
 
-    [[:node-destroy [:chat :nickname]]
-     [:transform-disable [:chat :form] :clear-nickname]
-     [:transform-disable [:chat :form] :send-message]
-     [:transform-enable [:chat :form] :set-nickname [{msg/topic :nickname
-                                                      (msg/param :nickname) {}}]]]))
+(def clear-nickname-deltas
+  [[:node-destroy [:chat :nickname]]
+   [:transform-disable [:chat :form] :clear-nickname]
+   [:transform-disable [:chat :form] :send-message]
+   [:transform-enable [:chat :form] :set-nickname [{msg/topic [:nickname]
+                                                    (msg/param :nickname) {}}]]])
+(defn- nickname-deltas [nickname]
+  (if nickname (set-nickname-deltas nickname) clear-nickname-deltas))
 
 (defn chat-emit
   [inputs]
@@ -48,7 +51,8 @@
 (def example-app
   {:version 2
    :transform [
-               [:set-nickname [:nickname] nickname-transform]]
+               [:set-nickname [:nickname] nickname-transform]
+               [:clear-nickname [:nickname] (constantly nil)]]
    :emit [{:init init-app-model}
           [#{[:nickname]} chat-emit]
           [#{[:*]} (app/default-emitter [])]

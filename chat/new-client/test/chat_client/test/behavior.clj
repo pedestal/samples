@@ -18,22 +18,32 @@
 ;; Build an application, send a message to a transform and check the transform
 ;; state
 
-(deftest test-app-state
+(defn message-generates-deltas
+  [message deltas & {:keys [node] :as options}]
   (let [app (app/build example-app)]
     (app/begin app)
     (is (vector?
-         (test/run-sync! app [{msg/type :set-nickname msg/topic [:nickname] :nickname "Mick"}])))
-    (is (= [[:node-create [:chat :nickname] :map]
-            [:value [:chat :nickname] "Mick"]
-            [:transform-enable [:chat :form] :clear-nickname [{msg/topic [:nickname]}]]
-            [:transform-enable [:chat :form] :send-message [{msg/topic [:outbound]
-                                                             (msg/param :text) {}
-                                                             :nickname "Mick"}]]
-            [:transform-disable [:chat :form] :set-nickname]]
+         (test/run-sync! app [message])))
+    (is (= deltas
            (-> app :state deref :io.pedestal.app/emitter-deltas))
         "Emits correct deltas")
-    (is (= (-> app :state deref :data-model :nickname) "Mick")
+    (is (= (:value options)
+           (-> app :state deref :data-model node))
         "Modifies correct data model value")))
+
+(deftest test-set-nickname
+  (message-generates-deltas
+   {msg/type :set-nickname msg/topic [:nickname] :nickname "Mick"}
+   (set-nickname-deltas "Mick")
+   :node :nickname
+   :value "Mick"))
+
+(deftest test-clear-nickname
+  (message-generates-deltas
+   {msg/type :clear-nickname msg/topic [:nickname]}
+   clear-nickname-deltas
+   :node :nickname
+   :value nil))
 
 ;; Use io.pedestal.app.query to query the current application model
 
