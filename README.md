@@ -11,9 +11,8 @@ motivations and concepts](https://raw.github.com/pedestal/samples/master/slides/
 
 ## Samples
 
-* [helloworld-app](./helloworld-app), a simple **pedestal-app** (a counter)
-    that demonstrates how state is handled, how templates work (a bit)
-    and how updates and rendering are handled
+* [helloworld-app](./helloworld-app), a simple **pedestal-app** (a counter) that
+  demonstrates how state, updates and rendering are handled
 * [auto-reload-server](./auto-reload-server), a **pedestal-service** that
     uses [ns-tracker](https://github.com/weavejester/ns-tracker) to reload
     changed code
@@ -36,7 +35,7 @@ motivations and concepts](https://raw.github.com/pedestal/samples/master/slides/
 
 ## Contributing
 
-The Pedestal samples follow a similar procedure to Pedestal's [CONTRIBUTING.md](https://github.com/pedestal/pedestal/blob/master/CONTRIBUTING.md). 
+The Pedestal samples follow a similar procedure to Pedestal's [CONTRIBUTING.md](https://github.com/pedestal/pedestal/blob/master/CONTRIBUTING.md).
 
 ## License
 Copyright 2013 Relevance, Inc.
@@ -49,4 +48,3 @@ By using this software in any fashion, you are agreeing to be bound by
 the terms of this license.
 
 You must not remove this notice, or any other, from this software.
-
