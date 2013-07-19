@@ -23,6 +23,7 @@
     (app/begin app)
     (is (vector?
          (test/run-sync! app [{msg/type :set-nickname msg/topic [:nickname] :nickname "Mick"}])))
+    (prn (-> app :state deref :io.pedestal.app/emitter-deltas))
     (is (= (-> app :state deref :data-model :nickname) "Mick"))))
 
 ;; Use io.pedestal.app.query to query the current application model
