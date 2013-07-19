@@ -4,16 +4,33 @@
             [io.pedestal.app.render.push :as push-render]
             [io.pedestal.app.render :as render]
             [io.pedestal.app.messages :as msg]
-            [helloworld-app2.behavior :as behavior]
-            [helloworld-app2.rendering :as rendering]))
+            [helloworld-app2.rendering :as rendering]
+            [domina :as dom]))
+
+(defn inc-transform [old-value _]
+  ((fnil inc 0) old-value))
+
+(def count-app {:version 2
+                :transform [[:inc [:count] inc-transform]]})
+
+(defn receive-input [input-queue]
+  (p/put-message input-queue {msg/topic [:count] msg/type :inc})
+  (.setTimeout js/window #(receive-input input-queue) 3000))
 
 (defn create-app [render-config]
-  (let [app (app/build behavior/example-app)
+  (let [app (app/build count-app)
         render-fn (push-render/renderer "content" render-config render/log-fn)
         app-model (render/consume-app-model app render-fn)]
     (app/begin app)
-    (p/put-message (:input app) {msg/type :set-value msg/topic [:greeting] :value "Hello World!"})
+    (receive-input (:input app))
     {:app app :app-model app-model}))
 
+(defn render-value [r [_ _ old-value new-value] input-queue]
+  (dom/destroy-children! (dom/by-id "content"))
+  (dom/append! (dom/by-id "content")
+               (str "<h1>" new-value " Hello Worlds</h1>")))
+
+(def render-config [[:value [:**] render-value]])
+
 (defn ^:export main []
-  (create-app (rendering/render-config)))
+  (create-app render-config))
