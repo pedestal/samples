@@ -23,8 +23,17 @@
     (app/begin app)
     (is (vector?
          (test/run-sync! app [{msg/type :set-nickname msg/topic [:nickname] :nickname "Mick"}])))
-    (prn (-> app :state deref :io.pedestal.app/emitter-deltas))
-    (is (= (-> app :state deref :data-model :nickname) "Mick"))))
+    (is (= [[:node-create [:chat :nickname] :map]
+            [:value [:chat :nickname] "Mick"]
+            [:transform-enable [:chat :form] :clear-nickname [{msg/topic [:nickname]}]]
+            [:transform-enable [:chat :form] :send-message [{msg/topic [:outbound]
+                                                             (msg/param :text) {}
+                                                             :nickname "Mick"}]]
+            [:transform-disable [:chat :form] :set-nickname]]
+           (-> app :state deref :io.pedestal.app/emitter-deltas))
+        "Emits correct deltas")
+    (is (= (-> app :state deref :data-model :nickname) "Mick")
+        "Modifies correct data model value")))
 
 ;; Use io.pedestal.app.query to query the current application model
 
@@ -35,7 +44,7 @@
     (is (test/run-sync! app [{msg/topic [:nickname] msg/type :set-nickname :nickname "x"}]))
     (is (= (q '[:find ?v
                 :where
-                [?n :t/path [:nickname]]
+                [?n :t/path [:chat :nickname]]
                 [?n :t/value ?v]]
               @app-model)
            [["x"]]))))
