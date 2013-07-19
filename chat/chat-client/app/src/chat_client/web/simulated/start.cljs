@@ -33,7 +33,8 @@
         render-fn (push-render/renderer "content" render-config render/log-fn)
         services (services/->MockServices app)
         app-model (render/consume-app-model app render-fn)]
-    (p/start services)
+    ;; TODO - enable when necessary
+    #_(p/start services)
     (render/consume-app-model app render-fn)
     (app/consume-effects app services/services-fn)
     (app/begin app)
