@@ -3,9 +3,6 @@
               [io.pedestal.app :as app]
               [io.pedestal.app.messages :as msg]))
 
-(defn set-value-transform [old-value message]
-  (:value message))
-
 (defn nickname-transform
   [_ message]
   (:nickname message))
@@ -21,8 +18,7 @@
 (def example-app
   {:version 2
    :transform [
-               [:set-nickname [:nickname] nickname-transform]
-               [:set-value [:greeting] set-value-transform]]
+               [:set-nickname [:nickname] nickname-transform]]
    :emit [{:init init-app-model}
           [#{[:*]} (app/default-emitter nil)]]})
 
