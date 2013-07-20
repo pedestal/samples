@@ -20,15 +20,16 @@
 ;; Build an application, send a message to a transform and check the transform
 ;; state
 
-(defn message-generates-deltas
-  [message deltas & {:keys [node] :as options}]
+(defn message-produces
+  [message & {:keys [node] :as options}]
   (let [app (app/build example-app)]
     (app/begin app)
     (is (vector?
          (test/run-sync! app [message])))
-    (is (= deltas
-           (-> app :state deref :io.pedestal.app/emitter-deltas))
-        "Emits correct deltas")
+    (when (:deltas options)
+      (is (= (:deltas options)
+             (-> app :state deref :io.pedestal.app/emitter-deltas))
+          "Emits correct deltas"))
     (is (= (:value options)
            (-> app :state deref :data-model (get-in node)))
         "Modifies correct data model value")
@@ -36,16 +37,16 @@
       ((:with-state options) (-> app :state deref)))))
 
 (deftest test-set-nickname
-  (message-generates-deltas
+  (message-produces
    {msg/type :set-nickname msg/topic [:nickname] :nickname "Mick"}
-   (set-nickname-deltas "Mick")
+   :deltas (set-nickname-deltas "Mick")
    :node [:nickname]
    :value "Mick"))
 
 (deftest test-clear-nickname
-  (message-generates-deltas
+  (message-produces
    {msg/type :clear-nickname msg/topic [:nickname]}
-   clear-nickname-deltas
+   :deltas clear-nickname-deltas
    :node [:nickname]
    :value nil))
 
@@ -53,9 +54,8 @@
   (with-redefs [platform/date (constantly :date)
                 util/random-id (constantly 42)]
     (let [msg {:id 42 :time :date :nickname "RR" :text "We have touchdown" :status :pending}]
-      (message-generates-deltas
+      (message-produces
         {msg/type :send-message msg/topic [:outbound] :text "We have touchdown" :nickname "RR"}
-        []
         :node [:outbound :sent]
         :value (list msg)
         :with-state (fn [state]
@@ -64,25 +64,22 @@
                           "Sends :server effect message"))))))
 
 (deftest test-clear-outbound-messages
-  (message-generates-deltas
+  (message-produces
     {msg/type :clear-messages msg/topic [:outbound]}
-    []
     :node [:outbound]
     :value {:sent []}))
 
 (deftest test-receive-inbound
   (with-redefs [platform/date (constantly :date)]
     (let [msg {:id 42 :nickname "Derp" :text "derp" :time :date}]
-      (message-generates-deltas
+      (message-produces
       (merge {msg/type :received msg/topic [:inbound]} (dissoc msg :time))
-      []
       :node [:inbound :received]
       :value (list msg)))))
 
 (deftest test-clear-inbound-messages
-  (message-generates-deltas
+  (message-produces
     {msg/type :clear-messages msg/topic [:inbound]}
-    []
     :node [:inbound]
     :value {:received []}))
 ;; Use io.pedestal.app.query to query the current application model
