@@ -3,6 +3,7 @@
               [io.pedestal.app :as app]
               [io.pedestal.app.dataflow :as d]
               [io.pedestal.app.util.platform :as platform]
+              [io.pedestal.app.util.log :as log]
               [io.pedestal.app.messages :as msg]
               [chat-client.util :as util]))
 
@@ -21,6 +22,13 @@
     (-> old-value
         (update-in [:sent] conj msg)
         (assoc :sending msg))))
+
+(defn clear-messages
+  [old-value _]
+  (log/debug :in :clear-messages :transform :outbound)
+  (-> old-value
+      (assoc :sent [])
+      (dissoc :sending)))
 
 ;; Effect
 (defn send-message-to-server [outbound]
@@ -72,7 +80,8 @@
    :transform [
                [:set-nickname [:nickname] nickname-transform]
                [:clear-nickname [:nickname] (constantly nil)]
-               [:send-message [:outbound] send-message]]
+               [:send-message [:outbound] send-message]
+               [:clear-messages [:outbound] clear-messages]]
    :effect #{[#{[:outbound]} send-message-to-server :single-val]}
    :emit [{:init init-app-model}
           [#{[:nickname]} chat-emit]

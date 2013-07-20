@@ -13,7 +13,7 @@
 
 ;; Test a transform function
 
-(deftest test-set-value-transform
+(deftest test-nickname-transform
   (is (= (nickname-transform {} {msg/type :set-nickname msg/topic [:nickname] :nickname "x"})
          "x")))
 
@@ -62,6 +62,13 @@
                       (is (= [{msg/topic :server :out-message msg}]
                              (:effect state))
                           "Sends :server effect message"))))))
+
+(deftest test-clear-messages
+  (message-generates-deltas
+    {msg/type :clear-messages msg/topic [:outbound]}
+    []
+    :node [:outbound]
+    :value {:sent []}))
 
 ;; Use io.pedestal.app.query to query the current application model
 
