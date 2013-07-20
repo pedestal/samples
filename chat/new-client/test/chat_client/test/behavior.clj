@@ -63,13 +63,28 @@
                              (:effect state))
                           "Sends :server effect message"))))))
 
-(deftest test-clear-messages
+(deftest test-clear-outbound-messages
   (message-generates-deltas
     {msg/type :clear-messages msg/topic [:outbound]}
     []
     :node [:outbound]
     :value {:sent []}))
 
+(deftest test-receive-inbound
+  (with-redefs [platform/date (constantly :date)]
+    (let [msg {:id 42 :nickname "Derp" :text "derp" :time :date}]
+      (message-generates-deltas
+      (merge {msg/type :received msg/topic [:inbound]} (dissoc msg :time))
+      []
+      :node [:inbound :received]
+      :value (list msg)))))
+
+(deftest test-clear-inbound-messages
+  (message-generates-deltas
+    {msg/type :clear-messages msg/topic [:inbound]}
+    []
+    :node [:inbound]
+    :value {:received []}))
 ;; Use io.pedestal.app.query to query the current application model
 
 (deftest test-query-ui

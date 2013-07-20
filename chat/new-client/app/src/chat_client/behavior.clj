@@ -23,12 +23,23 @@
         (update-in [:sent] conj msg)
         (assoc :sending msg))))
 
-(defn clear-messages
+(defn clear-outbound-messages
   [old-value _]
   (log/debug :in :clear-messages :transform :outbound)
   (-> old-value
       (assoc :sent [])
       (dissoc :sending)))
+
+(defn clear-inbound-messages
+  [old-value _]
+  (log/debug :in :clear-messages :transform :inbound)
+  (assoc old-value :received []))
+
+(defn receive-inbound
+  [old-value message]
+  (let [msg {:id (:id message) :time (platform/date)
+             :nickname (:nickname message) :text (:text message)}]
+    (update-in old-value [:received] conj msg)))
 
 ;; Effect
 (defn send-message-to-server [outbound]
@@ -77,11 +88,12 @@
 
 (def example-app
   {:version 2
-   :transform [
-               [:set-nickname [:nickname] nickname-transform]
+   :transform [[:set-nickname [:nickname] nickname-transform]
                [:clear-nickname [:nickname] (constantly nil)]
+               [:received [:inbound] receive-inbound]
+               [:clear-messages [:inbound] clear-inbound-messages]
                [:send-message [:outbound] send-message]
-               [:clear-messages [:outbound] clear-messages]]
+               [:clear-messages [:outbound] clear-outbound-messages]]
    :effect #{[#{[:outbound]} send-message-to-server :single-val]}
    :emit [{:init init-app-model}
           [#{[:nickname]} chat-emit]
