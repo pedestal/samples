@@ -32,7 +32,7 @@
 
 ;; Effect
 (defn send-message-to-server [outbound]
-  [{msg/topic :server :out-message (:sending outbound)}])
+  [{msg/topic [:server] :out-message (:sending outbound)}])
 
 ;; Emits
 (defn init-app-model [_]

@@ -59,7 +59,7 @@
         :node [:outbound :sent]
         :value (list msg)
         :with-state (fn [state]
-                      (is (= [{msg/topic :server :out-message msg}]
+                      (is (= [{msg/topic [:server] :out-message msg}]
                              (:effect state))
                           "Sends :server effect message"))))))
 
