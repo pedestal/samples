@@ -30,9 +30,10 @@
       (is (= (:deltas options)
              (-> app :state deref :io.pedestal.app/emitter-deltas))
           "Emits correct deltas"))
-    (is (= (:value options)
-           (-> app :state deref :data-model (get-in node)))
-        "Modifies correct data model value")
+    (when-let [[node value] (:data-model options)]
+      (is (= value
+             (-> app :state deref :data-model (get-in node)))
+          "Modifies correct data model value"))
     (when (:with-state options)
       ((:with-state options) (-> app :state deref)))))
 
@@ -40,15 +41,13 @@
   (message-produces
    {msg/type :set-nickname msg/topic [:nickname] :nickname "Mick"}
    :deltas (set-nickname-deltas "Mick")
-   :node [:nickname]
-   :value "Mick"))
+   :data-model [[:nickname] "Mick"]))
 
 (deftest test-clear-nickname
   (message-produces
-   {msg/type :clear-nickname msg/topic [:nickname]}
-   :deltas clear-nickname-deltas
-   :node [:nickname]
-   :value nil))
+    {msg/type :clear-nickname msg/topic [:nickname]}
+    :deltas clear-nickname-deltas
+    :data-model [[:nickname] nil]))
 
 (deftest test-send-message
   (with-redefs [platform/date (constantly :date)
@@ -56,8 +55,7 @@
     (let [msg {:id 42 :time :date :nickname "RR" :text "We have touchdown" :status :pending}]
       (message-produces
         {msg/type :send-message msg/topic [:outbound] :text "We have touchdown" :nickname "RR"}
-        :node [:outbound :sent]
-        :value (list msg)
+        :data-model [[:outbound :sent] (list msg)]
         :with-state (fn [state]
                       (is (= [{msg/topic [:server] :out-message msg}]
                              (:effect state))
@@ -66,22 +64,20 @@
 (deftest test-clear-outbound-messages
   (message-produces
     {msg/type :clear-messages msg/topic [:outbound]}
-    :node [:outbound]
-    :value {:sent []}))
+    :data-model [[:outbound :sent] []]))
 
 (deftest test-receive-inbound
   (with-redefs [platform/date (constantly :date)]
     (let [msg {:id 42 :nickname "Derp" :text "derp" :time :date}]
       (message-produces
-      (merge {msg/type :received msg/topic [:inbound]} (dissoc msg :time))
-      :node [:inbound :received]
-      :value (list msg)))))
+        (merge {msg/type :received msg/topic [:inbound]} (dissoc msg :time))
+        :data-model [[:inbound :received] (list msg)]))))
 
 (deftest test-clear-inbound-messages
   (message-produces
     {msg/type :clear-messages msg/topic [:inbound]}
-    :node [:inbound]
-    :value {:received []}))
+    :data-model [[:inbound :received] []]))
+
 ;; Use io.pedestal.app.query to query the current application model
 
 (deftest test-query-ui
