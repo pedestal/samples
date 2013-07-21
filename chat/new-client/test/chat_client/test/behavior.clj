@@ -33,7 +33,7 @@
     (when-let [[node value] (:data-model options)]
       (is (= value
              (-> app :state deref :data-model (get-in node)))
-          "Modifies correct data model value"))
+          "Sets correct data model value"))
     (when (:with-state options)
       ((:with-state options) (-> app :state deref)))))
 
@@ -72,6 +72,8 @@
       (message-produces
         (-> msg (dissoc :time) (assoc msg/type :received msg/topic [:inbound]))
         :data-model [[:inbound :received] (list msg)]
+        :deltas [[:node-create [:chat :log 42] :map]
+                 [:value [:chat :log 42] msg]]
         :with-state (fn [state]
                       (is (= (list msg)
                            (-> state :data-model :new-messages))

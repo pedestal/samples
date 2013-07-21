@@ -61,6 +61,12 @@
       {:clear-messages [{msg/topic [:outbound]} {msg/topic [:inbound]}]
        :set-nickname [{msg/topic [:nickname] (msg/param :nickname) {}}]}}}}])
 
+(defn- new-deltas [value]
+  (vec (mapcat (fn [{:keys [id] :as msg}]
+                 [[:node-create [:chat :log id] :map]
+                  [:value [:chat :log id] msg]])
+               value)))
+
 (defn set-nickname-deltas
   [nickname]
   [[:node-create [:chat :nickname] :map]
@@ -85,7 +91,7 @@
   (reduce (fn [a [input-path new-value]]
             (concat a (case input-path
                         ;; TODO - enable these
-                        ;;:new-messages (new-deltas new-value)
+                        [:new-messages] (new-deltas new-value)
                         ;;:deleted-messages (delete-deltas new-value)
                         ;;:updated-messages (update-deltas new-value)
                         [:nickname] (nickname-deltas new-value)
@@ -104,7 +110,7 @@
    :derive #{[{[:inbound] :inbound [:outbound] :outbound} [:new-messages] new-messages :map]}
    :effect #{[#{[:outbound]} send-message-to-server :single-val]}
    :emit [{:init init-app-model}
-          [#{[:nickname]} chat-emit]
+          [#{[:nickname] [:new-messages]} chat-emit]
           ;[#{[:*]} (app/default-emitter [])]
           ]})
 
