@@ -86,6 +86,11 @@
 (defn- nickname-deltas [nickname]
   (if nickname (set-nickname-deltas nickname) clear-nickname-deltas))
 
+(def sort-order
+  {[:new-messages] 0
+   [:deleted-messages] 1
+   [:updated-messages] 2})
+
 (defn chat-emit
   [inputs]
   (reduce (fn [a [input-path new-value]]
@@ -97,7 +102,7 @@
                         [:nickname] (nickname-deltas new-value)
                         [])))
           []
-          (d/added-inputs inputs)))
+          (sort-by #(get sort-order (key %)) (d/added-inputs inputs))))
 
 (def example-app
   {:version 2
