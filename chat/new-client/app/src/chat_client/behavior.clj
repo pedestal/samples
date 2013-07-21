@@ -5,6 +5,7 @@
               [io.pedestal.app.util.platform :as platform]
               [io.pedestal.app.util.log :as log]
               [io.pedestal.app.messages :as msg]
+              [clojure.set :as set]
               [chat-client.util :as util]))
 
 ;; Transforms
@@ -40,6 +41,12 @@
   (let [msg {:id (:id message) :time (platform/date)
              :nickname (:nickname message) :text (:text message)}]
     (update-in old-value [:received] conj msg)))
+
+;; Derives
+
+;; TODO - is there a need to diff against old if inputs give us new?
+(defn new-messages [_ inputs]
+  (sort-by :time (get-in inputs [:inbound :received])))
 
 ;; Effect
 (defn send-message-to-server [outbound]
@@ -94,6 +101,7 @@
                [:clear-messages [:inbound] clear-inbound-messages]
                [:send-message [:outbound] send-message]
                [:clear-messages [:outbound] clear-outbound-messages]]
+   :derive #{[{[:inbound] :inbound [:outbound] :outbound} [:new-messages] new-messages :map]}
    :effect #{[#{[:outbound]} send-message-to-server :single-val]}
    :emit [{:init init-app-model}
           [#{[:nickname]} chat-emit]

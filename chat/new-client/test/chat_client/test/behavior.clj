@@ -70,8 +70,12 @@
   (with-redefs [platform/date (constantly :date)]
     (let [msg {:id 42 :nickname "Derp" :text "derp" :time :date}]
       (message-produces
-        (merge {msg/type :received msg/topic [:inbound]} (dissoc msg :time))
-        :data-model [[:inbound :received] (list msg)]))))
+        (-> msg (dissoc :time) (assoc msg/type :received msg/topic [:inbound]))
+        :data-model [[:inbound :received] (list msg)]
+        :with-state (fn [state]
+                      (is (= (list msg)
+                           (-> state :data-model :new-messages))
+                          ":new-messages derives from :inbound"))))))
 
 (deftest test-clear-inbound-messages
   (message-produces
