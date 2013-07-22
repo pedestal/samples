@@ -48,6 +48,23 @@
 (defn new-messages [_ inputs]
   (sort-by :time (get-in inputs [:inbound :received])))
 
+(defn- index-by [coll key]
+  (reduce
+   (fn [a x]
+     (assoc a (key x) x))
+   {}
+   coll))
+
+(defn- updated-message? [reference-messages msg]
+  (when-let [reference-msg (reference-messages (:id msg))]
+    (not= (:time reference-msg) (:time msg))))
+
+(defn updated-messages [state inputs]
+  (let [new-msgs (:new-messages inputs)
+        out-msgs-index (index-by (get-in inputs [:outbound :sent]) :id)]
+    (let [updated-msgs (filter (partial updated-message? out-msgs-index) new-msgs)]
+      (map #(assoc % :status :confirmed) updated-msgs))))
+
 ;; Effect
 (defn send-message-to-server [outbound]
   [{msg/topic [:server] :out-message (:sending outbound)}])
@@ -112,7 +129,8 @@
                [:clear-messages [:inbound] clear-inbound-messages]
                [:send-message [:outbound] send-message]
                [:clear-messages [:outbound] clear-outbound-messages]]
-   :derive #{[{[:inbound] :inbound [:outbound] :outbound} [:new-messages] new-messages :map]}
+   :derive #{[{[:inbound] :inbound [:outbound] :outbound} [:new-messages] new-messages :map]
+             [{[:new-messages] :new-messages [:outbound] :outbound} [:updated-messages] updated-messages :map]}
    :effect #{[#{[:outbound]} send-message-to-server :single-val]}
    :emit [{:init init-app-model}
           [#{[:nickname] [:new-messages]} chat-emit]

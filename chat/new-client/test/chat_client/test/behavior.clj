@@ -25,7 +25,7 @@
   (let [app (app/build example-app)]
     (app/begin app)
     (is (vector?
-         (test/run-sync! app [message])))
+         (test/run-sync! app (if (vector? message) message [message]))))
     (when (:deltas options)
       (is (= (:deltas options)
              (-> app :state deref :io.pedestal.app/emitter-deltas))
@@ -78,6 +78,19 @@
                       (is (= (list msg)
                            (-> state :data-model :new-messages))
                           ":new-messages derives from :inbound"))))))
+
+(deftest test-receive-inbound-sets-updated-message
+  (with-redefs [util/random-id (constantly 42)]
+    (let [msg {:id 42 :nickname "Apollo" :text "Houston, we have a bagel"}]
+      (message-produces
+        [(-> msg (dissoc :id) (assoc msg/type :send-message msg/topic [:outbound]))
+         (-> msg (assoc msg/type :received msg/topic [:inbound]))]
+        :with-state (fn [state]
+                      (is (= (assoc msg :status :confirmed)
+                             (-> (get-in state [:data-model :updated-messages])
+                                 first
+                                 (dissoc :time)))
+                          "message :status is :confirmed"))))))
 
 (deftest test-clear-inbound-messages
   (message-produces
