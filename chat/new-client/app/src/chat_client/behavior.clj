@@ -6,6 +6,7 @@
               [io.pedestal.app.util.log :as log]
               [io.pedestal.app.messages :as msg]
               [clojure.set :as set]
+              [chat-client.hook :as hook]
               [chat-client.util :as util]))
 
 ;; Transforms
@@ -137,3 +138,11 @@
           ;[#{[:*]} (app/default-emitter [])]
           ]})
 
+
+(defn log-fn [msg f]
+  (fn [& args]
+    (print msg)
+    (prn args)
+    (apply f args)))
+
+(hook/log-app #'example-app log-fn)
