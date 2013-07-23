@@ -1,4 +1,4 @@
-(ns chat-client.hook)
+(ns ^:shared chat-client.hook)
 
 (defn- wrap-transform [log-fn]
   (fn [[op path f]]
@@ -28,10 +28,9 @@
           [paths (log-fn (format "Emit: Matches %s. Received arguments: " paths) f)])
         (prn "EMIT not handled" emit-entry)))))
 
-(defn log-app [app-var log-fn]
-  (alter-var-root app-var (fn [app]
-                      (assoc app
-                             :transform (mapv (wrap-transform log-fn) (:transform app))
-                             :derive (set (map (wrap-derive log-fn) (:derive app)))
-                             :effect (set (map (wrap-effect log-fn) (:effect app)))
-                             :emit (mapv (wrap-emit log-fn) (:emit app))))))
+(defn wrap-app [app log-fn]
+  (assoc app
+         :transform (mapv (wrap-transform log-fn) (:transform app))
+         :derive (set (map (wrap-derive log-fn) (:derive app)))
+         :effect (set (map (wrap-effect log-fn) (:effect app)))
+         :emit (mapv (wrap-emit log-fn) (:emit app))))
