@@ -2,6 +2,6 @@
 
 (defn log-fn [msg f]
   (fn [& args]
-    (print msg)
+    (print (str msg " "))
     (prn args)
     (apply f args)))

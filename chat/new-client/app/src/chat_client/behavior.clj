@@ -142,4 +142,5 @@
           ;[#{[:*]} (app/default-emitter [])]
           ]})
 
-(def example-app (hook/wrap-app example-app hook-logger/log-fn))
+;; Reenable in order to log dataflow fns
+;;(def example-app (hook/wrap-app example-app hook-logger/log-fn))
