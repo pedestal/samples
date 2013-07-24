@@ -2,5 +2,5 @@
 
 (defn log-fn [msg f]
   (fn [& args]
-    (.log js/console msg (clj->js args))
+    (.log js/console msg (pr-str args))
     (apply f args)))
