@@ -121,7 +121,10 @@
                         [:nickname] (nickname-deltas new-value)
                         [])))
           []
-          (sort-by #(get sort-order (key %)) (d/added-inputs inputs))))
+          (sort-by #(get sort-order (key %))
+                   ;; TODO: Is there a better way to do this e.g. combining
+                   ;; :added and :updated sets from inputs?
+                   (merge (d/added-inputs inputs) (d/updated-inputs inputs)))))
 
 (def example-app
   {:version 2

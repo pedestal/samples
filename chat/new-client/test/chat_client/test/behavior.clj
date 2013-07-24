@@ -45,7 +45,8 @@
 
 (deftest test-clear-nickname
   (message-produces
-    {msg/type :clear-nickname msg/topic [:nickname]}
+    [{msg/type :set-nickname msg/topic [:nickname] :nickname "Mick"}
+     {msg/type :clear-nickname msg/topic [:nickname]}]
     :deltas clear-nickname-deltas
     :data-model [[:nickname] nil]))
 
