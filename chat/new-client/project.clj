@@ -11,4 +11,5 @@
   :source-paths ["app/src" "app/templates"]
   :resource-paths ["config"]
   :target-path "out/"
+  :test-selectors {:focus :focus}
   :aliases {"dumbrepl" ["trampoline" "run" "-m" "clojure.main/main"]})

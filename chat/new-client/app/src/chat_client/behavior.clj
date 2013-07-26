@@ -28,14 +28,12 @@
 
 (defn clear-outbound-messages
   [old-value _]
-  (log/debug :in :clear-messages :transform :outbound)
   (-> old-value
       (assoc :sent [])
       (dissoc :sending)))
 
 (defn clear-inbound-messages
   [old-value _]
-  (log/debug :in :clear-messages :transform :inbound)
   (assoc old-value :received []))
 
 (defn receive-inbound
@@ -66,6 +64,22 @@
         out-msgs-index (index-by (get-in inputs [:outbound :sent]) :id)]
     (let [updated-msgs (filter (partial updated-message? out-msgs-index) new-msgs)]
       (map #(assoc % :status :confirmed) updated-msgs))))
+
+(defn diff-by [f new old]
+  (let [o (set (map f old))
+        n (set (map f new))
+        new-keys (set/difference n o)]
+    (filter (comp new-keys f) new)))
+
+(defn deleted-msgs [{:keys [old new]} k]
+  (let [o (set (k old))
+        n (set (k new))]
+    (diff-by :id o n)))
+
+(defn deleted-messages [_ inputs]
+  (let [in (deleted-msgs (d/old-and-new inputs [:inbound]) :received)
+        out (deleted-msgs (d/old-and-new inputs [:outbound]) :sent)]
+    (concat in out)))
 
 ;; Effect
 (defn send-message-to-server [outbound]
@@ -139,7 +153,9 @@
                [:send-message [:outbound] send-message]
                [:clear-messages [:outbound] clear-outbound-messages]]
    :derive #{[{[:inbound] :inbound [:outbound] :outbound} [:new-messages] new-messages :map]
-             [{[:new-messages] :new-messages [:outbound] :outbound} [:updated-messages] updated-messages :map]}
+             [{[:new-messages] :new-messages [:outbound] :outbound} [:updated-messages] updated-messages :map]
+             [#{[:outbound] [:inbound]} [:deleted-messages] deleted-messages]
+             }
    :effect #{[#{[:outbound]} send-message-to-server :single-val]}
    :emit [{:init init-app-model}
           [#{[:nickname] [:new-messages] [:updated-messages]} chat-emit]
@@ -147,4 +163,6 @@
           ]})
 
 ;; Reenable in order to log dataflow fns
-;;(def example-app (hook/wrap-app example-app hook-logger/log-fn))
+;; (def example-app (hook/wrap-app example-app hook-logger/log-fn))
+
+

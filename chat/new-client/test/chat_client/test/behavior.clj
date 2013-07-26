@@ -64,8 +64,17 @@
 
 (deftest test-clear-outbound-messages
   (message-produces
-    {msg/type :clear-messages msg/topic [:outbound]}
-    :data-model [[:outbound :sent] []]))
+   {msg/type :clear-messages msg/topic [:outbound]}
+   :data-model [[:outbound :sent] []]))
+
+(deftest test-deleted-messages
+  (let [msg {:id 42 :nickname "Apollo" :text "Houston, we have a hotdog"}]
+    (message-produces
+     [(-> msg (dissoc :id) (assoc msg/type :send-message msg/topic [:outbound]))
+      {msg/type :clear-messages msg/topic [:outbound]}]
+     :with-state (fn [state]
+                   (is (= ["Apollo"]
+                        (map :nickname (get-in state [:data-model :deleted-messages]))))))))
 
 (deftest test-receive-inbound
   (with-redefs [platform/date (constantly :date)]
