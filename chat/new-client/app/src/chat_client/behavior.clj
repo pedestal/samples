@@ -128,6 +128,11 @@
 (defn- nickname-deltas [nickname]
   (if nickname (set-nickname-deltas nickname) clear-nickname-deltas))
 
+(defn- delete-deltas [value]
+  (vec (mapcat (fn [{:keys [id] :as msg}]
+                 [[:node-destroy [:chat :log id]]])
+               value)))
+
 (def sort-order
   {[:new-messages] 0
    [:deleted-messages] 1
@@ -137,9 +142,8 @@
   [inputs]
   (reduce (fn [a [input-path new-value]]
             (concat a (case input-path
-                        ;; TODO - enable these
                         [:new-messages] (new-deltas new-value)
-                        ;;:deleted-messages (delete-deltas new-value)
+                        [:deleted-messages] (delete-deltas new-value)
                         [:updated-messages] (update-deltas new-value)
                         [:nickname] (nickname-deltas new-value)
                         [])))
@@ -162,7 +166,7 @@
              [#{[:outbound] [:inbound]} [:deleted-messages] deleted-messages]}
    :effect #{[#{[:outbound]} send-message-to-server :single-val]}
    :emit [{:init init-app-model}
-          [#{[:nickname] [:new-messages] [:updated-messages]} chat-emit]
+          [#{[:nickname] [:new-messages] [:updated-messages] [:deleted-messages]} chat-emit]
           ;[#{[:*]} (app/default-emitter [])]
           ]})
 
