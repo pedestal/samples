@@ -82,16 +82,24 @@
 
 (deftest test-receive-inbound-sets-updated-message
   (with-redefs [util/random-id (constantly 42)]
-    (let [msg {:id 42 :nickname "Apollo" :text "Houston, we have a bagel"}]
+    (let [msg {:id 42 :nickname "Hungry Apollo" :text "Houston, we have a bagel"}]
       (message-produces
         [(-> msg (dissoc :id) (assoc msg/type :send-message msg/topic [:outbound]))
          (-> msg (assoc msg/type :received msg/topic [:inbound]))]
         :with-state (fn [state]
                       (is (= (assoc msg :status :confirmed)
-                             (-> (get-in state [:data-model :updated-messages])
+                             (-> state
+                                 (get-in [:data-model :updated-messages])
                                  first
                                  (dissoc :time)))
-                          "message :status is :confirmed"))))))
+                          "message :status is :confirmed")
+                      (let [delta (-> state
+                                      (get :io.pedestal.app/emitter-deltas)
+                                      last)]
+                        (is (= [:value [:chat :log 42] msg]
+                               (let [[op path actual-msg] delta]
+                                 [op path (dissoc actual-msg :time :status)]))
+                            "emits updated message delta")))))))
 
 (deftest test-clear-inbound-messages
   (message-produces

@@ -86,6 +86,10 @@
                   [:value [:chat :log id] msg]])
                value)))
 
+(defn- update-deltas [value]
+  (mapv (fn [{:keys [id] :as msg}]
+          [:value [:chat :log id] msg]) value))
+
 (defn set-nickname-deltas
   [nickname]
   [[:node-create [:chat :nickname] :map]
@@ -117,7 +121,7 @@
                         ;; TODO - enable these
                         [:new-messages] (new-deltas new-value)
                         ;;:deleted-messages (delete-deltas new-value)
-                        ;;:updated-messages (update-deltas new-value)
+                        [:updated-messages] (update-deltas new-value)
                         [:nickname] (nickname-deltas new-value)
                         [])))
           []
@@ -138,7 +142,7 @@
              [{[:new-messages] :new-messages [:outbound] :outbound} [:updated-messages] updated-messages :map]}
    :effect #{[#{[:outbound]} send-message-to-server :single-val]}
    :emit [{:init init-app-model}
-          [#{[:nickname] [:new-messages]} chat-emit]
+          [#{[:nickname] [:new-messages] [:updated-messages]} chat-emit]
           ;[#{[:*]} (app/default-emitter [])]
           ]})
 
