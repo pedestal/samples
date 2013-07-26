@@ -44,9 +44,20 @@
 
 ;; Derives
 
-;; TODO - is there a need to diff against old if inputs give us new?
+(defn diff-by [f new old]
+  (let [o (set (map f old))
+        n (set (map f new))
+        new-keys (set/difference n o)]
+    (filter (comp new-keys f) new)))
+
+(defn new-msgs [{:keys [old new]} k]
+  (let [o (set (k old))
+        n (set (k new))]
+    (diff-by :id n o)))
+
 (defn new-messages [_ inputs]
-  (sort-by :time (get-in inputs [:inbound :received])))
+  (let [in (new-msgs (d/old-and-new inputs [:inbound]) :received)]
+    (sort-by :time in)))
 
 (defn- index-by [coll key]
   (reduce
@@ -64,12 +75,6 @@
         out-msgs-index (index-by (get-in inputs [:outbound :sent]) :id)]
     (let [updated-msgs (filter (partial updated-message? out-msgs-index) new-msgs)]
       (map #(assoc % :status :confirmed) updated-msgs))))
-
-(defn diff-by [f new old]
-  (let [o (set (map f old))
-        n (set (map f new))
-        new-keys (set/difference n o)]
-    (filter (comp new-keys f) new)))
 
 (defn deleted-msgs [{:keys [old new]} k]
   (let [o (set (k old))
@@ -152,10 +157,9 @@
                [:clear-messages [:inbound] clear-inbound-messages]
                [:send-message [:outbound] send-message]
                [:clear-messages [:outbound] clear-outbound-messages]]
-   :derive #{[{[:inbound] :inbound [:outbound] :outbound} [:new-messages] new-messages :map]
+   :derive #{[#{[:inbound] [:outbound]} [:new-messages] new-messages]
              [{[:new-messages] :new-messages [:outbound] :outbound} [:updated-messages] updated-messages :map]
-             [#{[:outbound] [:inbound]} [:deleted-messages] deleted-messages]
-             }
+             [#{[:outbound] [:inbound]} [:deleted-messages] deleted-messages]}
    :effect #{[#{[:outbound]} send-message-to-server :single-val]}
    :emit [{:init init-app-model}
           [#{[:nickname] [:new-messages] [:updated-messages]} chat-emit]

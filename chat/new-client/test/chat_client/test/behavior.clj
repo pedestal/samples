@@ -78,14 +78,16 @@
 
 (deftest test-receive-inbound
   (with-redefs [platform/date (constantly :date)]
-    (let [msg {:id 42 :nickname "Derp" :text "derp" :time :date}]
+    (let [msg {:id 42 :nickname "Derp" :text "derp" :time :date}
+          msg2 (assoc msg :id 43)]
       (message-produces
-        (-> msg (dissoc :time) (assoc msg/type :received msg/topic [:inbound]))
-        :data-model [[:inbound :received] (list msg)]
-        :deltas [[:node-create [:chat :log 42] :map]
-                 [:value [:chat :log 42] msg]]
+       [(-> msg (dissoc :time) (assoc msg/type :received msg/topic [:inbound]))
+        (-> msg2 (dissoc :time) (assoc msg/type :received msg/topic [:inbound]))]
+        :data-model [[:inbound :received] (list msg2 msg)]
+        :deltas [[:node-create [:chat :log 43] :map]
+                 [:value [:chat :log 43] msg2]]
         :with-state (fn [state]
-                      (is (= (list msg)
+                      (is (= (list msg2)
                            (-> state :data-model :new-messages))
                           ":new-messages derives from :inbound"))))))
 
