@@ -12,10 +12,6 @@
    color: darkgreen;
 }
 
-.node-section {
-    margin-left: 40px;
-}
-
 /* end Clojure data formatter */
 
 /* begin customize bootstrap */
@@ -31,11 +27,6 @@
   cursor: default;
   text-decoration: none;
   background-color: inherit;
-}
-
-div.hero-unit p.small {
-  font-size:14px;
-  line-height:18px
 }
 
 /* end customize bootstrap */
