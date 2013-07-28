@@ -12,8 +12,11 @@
         render-fn (push-render/renderer "content" render-config render/log-fn)
         app-model (render/consume-app-model app render-fn)]
     (app/begin app)
-    (p/put-message (:input app) {msg/type :set-value msg/topic [:greeting] :value "Hello World!"})
     {:app app :app-model app-model}))
+
+(defn setup-services [app ->services services-fn]
+  (app/consume-effects (:app app) services-fn)
+  (p/start (->services (:app app))))
 
 (defn ^:export main []
   (create-app (rendering/render-config)))
