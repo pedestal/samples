@@ -1,12 +1,62 @@
 <_within file="application.html">
-  
+
   <div id="content">
 
-    <div template="hello" field="id:id">
-
-      <div field="content:message" class="message">A Message</div>
-
+    <div class='startup' id='root' template="chat">
+      <!-- Turned off until sample has members count feature
+      <div class='members'>
+        <p>
+          <i class='users-icon'></i>
+          3 Members
+        </p>
+      </div> -->
+      <div class='chat-wrapper'>
+        <div class='chat-frame'>
+          <div class='messages' field="content:messages">
+            <div class='message' template="message" field="id:id">
+              <div field="class:status">
+                
+                <div class='gutter'></div>
+                <div class='body'>
+                  <div class='header'>
+                    <span class='name' field="content:nickname">anonymous</span>
+                    <span class='time' field="content:time">- 10:23 PM</span>
+                </div>
+                  <div class='content' field="content:text">
+                    Master cleanse vice bushwick lomo literally Austin.  Pour-over wayfarers brunch portland literally Austin.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class='chat-footer'></div>
+        </div>
+        <div class='chat-bar'>
+          <form class='enter-message hide'>
+            <div class='right'>
+              <i class='nickname-icon'></i>
+              <button class='send-button' id="send-message-button" type="submit">Send</button>
+            </div>
+            <i class='message-icon focused'></i>
+            <input id="message-input" type="text" placeholder='Enter a message...'>
+          </form>
+          <form class='enter-nickname'>
+            <div class='right'>
+              <!-- <i class='message-icon'></i> -->
+              <button class='ok-button' id="set-nickname-button" type="submit">OK!</button>
+            </div>
+            <div class='tooltip'>I know you’re excited but please enter a nickname first.</div>
+            <i class='nickname-icon focused'></i>
+            <input id="nickname-input" type="text" placeholder='Enter your nickname...'>
+          </form>
+        </div>
+      </div>
+      <!--
+        # Whenever we add a new message, make sure to fire this:
+        $('.chat-frame').scrollTop($('.chat-frame').height());
+       -->
     </div>
+
 
   </div>
 

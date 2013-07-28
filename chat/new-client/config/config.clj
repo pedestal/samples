@@ -64,11 +64,12 @@
                         ;; page will be generated from the template
                         ;; application.html
                         :uri "/chat-client-data-ui.html"
+                        :params "renderer=auto"
                         ;; Provide the name that will appear in the
                         ;; control panel for this aspect.
                         :name "Data UI"
                         :order 1
-                        :out-file "chat-client-data-ui.js"
+                        :out-file "chat-client-dev-ui.js"
                         ;; The namespace which contains the `main`
                         ;; function to call to start the application.
                         :main 'chat_client.simulated.start
@@ -81,6 +82,13 @@
                         :output-root :tools-public
                         ;; The data-ui aspect uses the tooling.html template
                         :template "tooling.html"}
+              :ui {:uri "/chat-client-dev-ui.html"
+                   :name "UI"
+                   :order 3
+                   :out-file "chat-client-dev-ui.js"
+                   :main 'chat_client.simulated.start
+                   :logging? true
+                   :output-root :tools-public}
               :development {:uri "/chat-client-dev.html"
                             :name "Development"
                             :out-file "chat-client-dev.js"
