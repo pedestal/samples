@@ -24,6 +24,7 @@
     :application {;; The directory where all generated JavaScript for
                   ;; this application will be written.
                   :generated-javascript "generated-js"
+                  :api-server {:host "localhost" :port 8080 :log-fn nil}
                   ;; The default template to use when creating host
                   ;; pages for each aspect below. Override this in an
                   ;; aspect by adding a :template key.
@@ -90,21 +91,23 @@
                    :logging? true
                    :output-root :tools-public}
               :development {:uri "/chat-client-dev.html"
+                            :use-api-server? true
                             :name "Development"
                             :out-file "chat-client-dev.js"
                             :main 'chat_client.start
                             :logging? true
-                            :order 3}
+                            :order 4}
               :fresh {:uri "/fresh.html"
                       :name "Fresh"
                       :out-file "fresh.js"
                       :main 'io.pedestal.app.net.repl_client
-                      :order 4
+                      :order 5
                       :output-root :tools-public
                       :template "tooling.html"}
               :production {:uri "/chat-client.html"
+                           :use-api-server? true
                            :name "Production"
                            :optimizations :advanced
                            :out-file "chat-client.js"
                            :main 'chat_client.start
-                           :order 5}}}})
+                           :order 6}}}})

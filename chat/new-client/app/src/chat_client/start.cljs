@@ -3,8 +3,8 @@
             [io.pedestal.app :as app]
             [io.pedestal.app.render.push :as push-render]
             [io.pedestal.app.render :as render]
-            [io.pedestal.app.messages :as msg]
             [chat-client.behavior :as behavior]
+            [chat-client.services :as services]
             [chat-client.rendering :as rendering]))
 
 (defn create-app [render-config]
@@ -19,4 +19,5 @@
   (p/start (->services (:app app))))
 
 (defn ^:export main []
-  (create-app (rendering/render-config)))
+  (doto (create-app (rendering/render-config))
+    (setup-services services/->Services services/services-fn)))
