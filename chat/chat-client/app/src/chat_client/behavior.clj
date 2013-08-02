@@ -158,10 +158,23 @@
                         [])))
           []
           (sort-by #(get sort-order (key %))
-                   ;; TODO: Is there a better way to do this e.g. combining
-                   ;; :added and :updated sets from inputs?
+                   ;; Alternatively this could be done by pulling
+                   ;; :added and :updated sets from inputs.
                    (merge (d/added-inputs inputs) (d/updated-inputs inputs)))))
 
+;; Data Model Paths:
+;; [:nickname] - Nickname for chat user
+;; [:inbound :received] - Received inbound messages
+;; [:outbound :sent] - Sent outbound messages
+;; [:outbound :sending] - Pending message that effect looks to send
+;; [:new-messages] - Messages that are new, determined by id
+;; [:deleted-messages] - Messages that have been deleted, determined by id
+;; [:updated-messages] - Messages that have been updated - not used by UI
+
+;; App Model Paths:
+;; [:chat :log :*] - Chat messages by id
+;; [:chat :form :*] - Rendering transforms that chat user interacts with
+;; [:chat :nickname] - Displays chat user
 (def example-app
   {:version 2
    :transform [[:set-nickname [:nickname] nickname-transform]
@@ -175,7 +188,6 @@
              [#{[:outbound] [:inbound]} [:deleted-messages] deleted-messages]}
    :effect #{[#{[:outbound]} send-message-to-server :single-val]}
    :emit [{:init init-app-model}
-          [#{[:nickname] [:new-messages] [:updated-messages] [:deleted-messages]} chat-emit]
-          ]})
+          [#{[:nickname] [:new-messages] [:updated-messages] [:deleted-messages]} chat-emit]]})
 
 
