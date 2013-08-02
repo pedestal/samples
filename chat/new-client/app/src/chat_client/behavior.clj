@@ -6,8 +6,6 @@
               [io.pedestal.app.util.log :as log]
               [io.pedestal.app.messages :as msg]
               [clojure.set :as set]
-              [chat-client.hook :as hook]
-              [chat-client.hook-logger :as hook-logger]
               [chat-client.util :as util]))
 
 ;; Transforms
@@ -167,10 +165,6 @@
    :effect #{[#{[:outbound]} send-message-to-server :single-val]}
    :emit [{:init init-app-model}
           [#{[:nickname] [:new-messages] [:updated-messages] [:deleted-messages]} chat-emit]
-          ;[#{[:*]} (app/default-emitter [])]
           ]})
-
-;; Reenable in order to log dataflow fns
-;; (def example-app (hook/wrap-app example-app hook-logger/log-fn))
 
 

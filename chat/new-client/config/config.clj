@@ -2,13 +2,13 @@
   (:require [net.cgrand.enlive-html :as html]
             [io.pedestal.app-tools.compile :as compile]))
 
-;; The configuration below determines how an applicaiton is built,
+;; The configuration below determines how an application is built,
 ;; what is built and what features are available in the application
 ;; development tool.
 
 (def configs
   ;; One project can host multiple applications. The top-level of the
-  ;; config map contains one entry for each appliction.
+  ;; config map contains one entry for each application.
   {:chat-client
    {;; :build contains parameters which are passed to the build
     :build {;; :watch-files contains a list of files to watch for
@@ -33,7 +33,7 @@
                   ;; output. Possible values are :public and
                   ;; :tools-public. Override this value in an aspect
                   ;; with :tools-output. :public maps to out/public
-                  ;; and and :tools-public maps to tools/out/public.
+                  ;; and :tools-public maps to tools/out/public.
                   :output-root :public}
     ;; Add arbitrary links to the control panel
     :control-panel {:design {:uri "/design.html"
