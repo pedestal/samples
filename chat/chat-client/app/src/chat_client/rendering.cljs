@@ -45,6 +45,7 @@
                               (set! (.-value text-node) "")
                               (msg/fill transform-name messages {:text text})))))
 
+    ;; TODO - expose this to the user
     :clear-messages
     (events/send-on-click (dom/by-id "clear-button") d transform-name messages)
 

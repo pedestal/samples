@@ -2,6 +2,10 @@
 
 See ../README.md
 
+## Tests
+
+To run this project's tests: `lein test`
+
 ## Configuration
 
 To configure logging see config/logback.xml. By default, the app logs to stdout and logs/.
