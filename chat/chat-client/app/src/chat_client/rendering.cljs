@@ -16,7 +16,8 @@
             [io.pedestal.app.render.events :as events]
             [io.pedestal.app.render.push.templates :as templates]
             [io.pedestal.app.messages :as msg]
-            [io.pedestal.app.render.push.handlers.automatic :as auto])
+            [io.pedestal.app.render.push.handlers.automatic :as auto]
+            [io.pedestal.app.render.push.handlers :as h])
   (:require-macros [chat-client.html-templates :as html-templates]))
 
 (def templates (html-templates/sample-templates))
@@ -61,12 +62,7 @@
                         (let [nickname-node (dom/by-id "nickname-input")
                               nickname (.-value nickname-node)]
                           (set! (.-value nickname-node) "")
-                          (msg/fill transform-name messages {:nickname nickname})))))
-
-    :clear-nickname
-    (events/send-on-click (dom/by-class "nickname-icon")
-                          d
-                          (msg/fill transform-name messages))))
+                          (msg/fill transform-name messages {:nickname nickname})))))))
 
 (defn form-transform-disable [r [_ path transform-name messages] d]
   (condp = transform-name
@@ -79,10 +75,7 @@
     (let [enter-nickname-form (dom/by-class "enter-nickname")]
       (dom/remove-class! (dom/by-id "root") "startup")
       (dom/add-class! enter-nickname-form "hide")
-      (dom-events/unlisten! enter-nickname-form))
-
-    :clear-nickname
-    (dom-events/unlisten! (dom/by-class "nickname-icon"))))
+      (dom-events/unlisten! enter-nickname-form))))
 
 (defn- format-time [d]
   (let [pad (fn [n] (if (< n 10) (str "0" n) (str n)))]
@@ -106,6 +99,8 @@
    [:node-destroy      [:chat]         destroy-chat-page]
    [:transform-enable  [:chat :form]   form-transform-enable]
    [:transform-disable [:chat :form]   form-transform-disable]
+   [:transform-enable [:chat :form :clear-nickname] (h/add-send-on-click (dom/by-class "nickname-icon"))]
+   [:transform-disable [:chat :form :clear-nickname] (h/remove-send-on-click (dom/by-class "nickname-icon"))]
    [:node-create       [:chat :log :*] create-message-node]
    [:node-destroy      [:chat :log :*] auto/default-exit]
    [:value             [:chat :log :*] update-message]])
