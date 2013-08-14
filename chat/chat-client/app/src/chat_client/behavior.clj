@@ -104,9 +104,12 @@
   [{:chat
     {:log {}
      :form
-     {:transforms
-      {:clear-messages [{msg/topic [:outbound]} {msg/topic [:inbound]}]
-       :set-nickname [{msg/topic [:nickname] (msg/param :nickname) {}}]}}}}])
+     {:clear-messages
+      {:transforms
+       {:clear-messages [{msg/topic [:outbound]} {msg/topic [:inbound]}]}}
+      :set-nickname
+      {:transforms
+       {:set-nickname [{msg/topic [:nickname] (msg/param :nickname) {}}]}}}}}])
 
 (defn- new-deltas [value]
   (vec (mapcat (fn [{:keys [id] :as msg}]
@@ -126,14 +129,14 @@
    [:transform-enable [:chat :form] :send-message [{msg/topic [:outbound]
                                                     (msg/param :text) {}
                                                     :nickname nickname}]]
-   [:transform-disable [:chat :form] :set-nickname]])
+   [:transform-disable [:chat :form :set-nickname] :set-nickname]])
 
 (def clear-nickname-deltas
   [[:node-destroy [:chat :nickname]]
    [:transform-disable [:chat :form :clear-nickname] :clear-nickname]
    [:transform-disable [:chat :form] :send-message]
-   [:transform-enable [:chat :form] :set-nickname [{msg/topic [:nickname]
-                                                    (msg/param :nickname) {}}]]])
+   [:transform-enable [:chat :form :set-nickname] :set-nickname [{msg/topic [:nickname]
+                                                                  (msg/param :nickname) {}}]]])
 (defn- nickname-deltas [nickname]
   (if nickname (set-nickname-deltas nickname) clear-nickname-deltas))
 

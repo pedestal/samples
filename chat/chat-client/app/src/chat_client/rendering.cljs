@@ -44,38 +44,34 @@
                       (fn [] (let [text-node (dom/by-id "message-input")
                                   text (.-value text-node)]
                               (set! (.-value text-node) "")
-                              (msg/fill transform-name messages {:text text})))))
+                              (msg/fill transform-name messages {:text text})))))))
 
-    ;; TODO - expose this to the user
-    :clear-messages
-    (events/send-on-click (dom/by-id "clear-button") d transform-name messages)
+(defn set-nickname-enable [r [_ path transform-name messages] d]
+  (let [enter-nickname-form (dom/by-class "enter-nickname")]
+    (dom/add-class! (dom/by-id "root") "startup")
+    (dom/remove-class! enter-nickname-form "hide")
+    (.focus (dom/by-id "nickname-input"))
+    (events/send-on :submit
+                    enter-nickname-form
+                    d
+                    (fn []
+                      (let [nickname-node (dom/by-id "nickname-input")
+                            nickname (.-value nickname-node)]
+                        (set! (.-value nickname-node) "")
+                        (msg/fill transform-name messages {:nickname nickname}))))))
 
-    :set-nickname
-    (let [enter-nickname-form (dom/by-class "enter-nickname")]
-      (dom/add-class! (dom/by-id "root") "startup")
-      (dom/remove-class! enter-nickname-form "hide")
-      (.focus (dom/by-id "nickname-input"))
-      (events/send-on :submit
-                      enter-nickname-form
-                      d
-                      (fn []
-                        (let [nickname-node (dom/by-id "nickname-input")
-                              nickname (.-value nickname-node)]
-                          (set! (.-value nickname-node) "")
-                          (msg/fill transform-name messages {:nickname nickname})))))))
+(defn set-nickname-disable [_ _ _]
+  (let [enter-nickname-form (dom/by-class "enter-nickname")]
+    (dom/remove-class! (dom/by-id "root") "startup")
+    (dom/add-class! enter-nickname-form "hide")
+    (dom-events/unlisten! enter-nickname-form)))
 
 (defn form-transform-disable [r [_ path transform-name messages] d]
   (condp = transform-name
     :send-message
     (let [enter-message-form (dom/by-class "enter-message")]
       (dom/add-class! enter-message-form "hide")
-      (dom-events/unlisten! enter-message-form))
-
-    :set-nickname
-    (let [enter-nickname-form (dom/by-class "enter-nickname")]
-      (dom/remove-class! (dom/by-id "root") "startup")
-      (dom/add-class! enter-nickname-form "hide")
-      (dom-events/unlisten! enter-nickname-form))))
+      (dom-events/unlisten! enter-message-form))))
 
 (defn- format-time [d]
   (let [pad (fn [n] (if (< n 10) (str "0" n) (str n)))]
@@ -99,8 +95,13 @@
    [:node-destroy      [:chat]         destroy-chat-page]
    [:transform-enable  [:chat :form]   form-transform-enable]
    [:transform-disable [:chat :form]   form-transform-disable]
-   [:transform-enable [:chat :form :clear-nickname] (h/add-send-on-click (dom/by-class "nickname-icon"))]
+   [:transform-enable  [:chat :form :set-nickname] set-nickname-enable]
+   [:transform-disable [:chat :form :set-nickname] set-nickname-disable]
+   [:transform-enable  [:chat :form :clear-nickname] (h/add-send-on-click (dom/by-class "nickname-icon"))]
    [:transform-disable [:chat :form :clear-nickname] (h/remove-send-on-click (dom/by-class "nickname-icon"))]
+    ;; TODO - expose clear-button to user
+   [:transform-enable [:chat :form :clear-messages (h/add-send-on-click "clear-button")]]
+   [:transform-disable [:chat :form :clear-messages (h/remove-send-on-click "clear-button")]]
    [:node-create       [:chat :log :*] create-message-node]
    [:node-destroy      [:chat :log :*] auto/default-exit]
    [:value             [:chat :log :*] update-message]])
