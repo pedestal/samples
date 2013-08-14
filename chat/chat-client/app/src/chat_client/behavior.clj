@@ -126,15 +126,15 @@
   [[:node-create [:chat :nickname] :map]
    [:value [:chat :nickname] nickname]
    [:transform-enable [:chat :form :clear-nickname] :clear-nickname [{msg/topic [:nickname]}]]
-   [:transform-enable [:chat :form] :send-message [{msg/topic [:outbound]
-                                                    (msg/param :text) {}
-                                                    :nickname nickname}]]
+   [:transform-enable [:chat :form :send-message] :send-message [{msg/topic [:outbound]
+                                                                  (msg/param :text) {}
+                                                                  :nickname nickname}]]
    [:transform-disable [:chat :form :set-nickname] :set-nickname]])
 
 (def clear-nickname-deltas
   [[:node-destroy [:chat :nickname]]
    [:transform-disable [:chat :form :clear-nickname] :clear-nickname]
-   [:transform-disable [:chat :form] :send-message]
+   [:transform-disable [:chat :form :send-message] :send-message]
    [:transform-enable [:chat :form :set-nickname] :set-nickname [{msg/topic [:nickname]
                                                                   (msg/param :nickname) {}}]]])
 (defn- nickname-deltas [nickname]
