@@ -7,7 +7,8 @@ This is a chat sample, which demonstrates the use of Pedestal with...
 - Routing
 - Interceptors
 
-Prerequisite: all Pedestal libraries, both server and client, must be installed.
+
+## Usage
 
 To run from the `chat` directory...
 
@@ -31,9 +32,7 @@ ln -s ../../chat-client/out/public
 
 cd ..
 
-lein repl
-(require 'dev)
-(dev/start)  # Launch webserver on port 8080.
+lein run # Launch webserver on port 8080.
 ```
 
 In a browser, navigate to <http://localhost:8080/chat-client-dev.html> where you will see the chat client interface.

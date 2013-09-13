@@ -2,6 +2,10 @@
 
 See ../README.md
 
+## Tests
+
+To run this project's tests: `lein test`
+
 ## Configuration
 
 To configure logging see config/logback.xml. By default, the app logs to stdout and logs/.
@@ -9,7 +13,7 @@ To learn more about configuring Logback, read its [documentation](http://logback
 
 ## Links
 
-* [Getting Started](http://pedestal.io/documentation/)
+* [Getting Started](https://github.com/pedestal/pedestal/tree/master/app#usage)
 * [Overview of how pedestal-client applications work](http://pedestal.io/documentation/application-overview/)
 
 

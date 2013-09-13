@@ -9,7 +9,7 @@
 ;
 ; You must not remove this notice, or any other, from this software.
 
-(ns chat-client.web.html-templates
+(ns chat-client.html-templates
   (:use [io.pedestal.app.templates :only [render tfn dtfn tnodes template-children]])
   (:require [net.cgrand.enlive-html :as html]))
 
