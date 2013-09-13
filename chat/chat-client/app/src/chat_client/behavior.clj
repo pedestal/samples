@@ -82,9 +82,9 @@
 
 (defn updated-messages [state inputs]
   (let [new-msgs (:new-messages inputs)
-        out-msgs-index (index-by (get-in inputs [:outbound :sent]) :id)]
-    (let [updated-msgs (filter (partial updated-message? out-msgs-index) new-msgs)]
-      (map #(assoc % :status :confirmed) updated-msgs))))
+        out-msgs-index (index-by (get-in inputs [:outbound :sent]) :id)
+        updated-msgs (filter (partial updated-message? out-msgs-index) new-msgs)]
+    (map #(assoc % :status :confirmed) updated-msgs)))
 
 (defn deleted-msgs [{:keys [old new]} k]
   (let [o (set (k old))
