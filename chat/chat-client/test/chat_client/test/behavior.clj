@@ -23,11 +23,10 @@
 (defn message-produces
   "Given message(s) on the input queue, consumes them and checks assertions on the resulting app state.
 
-Options:
-* :data-model: Takes a vector pair and checks that the given node has that value. For example, [[:nickname] \"Dude\"] -> [:nickname] path has \"Dude\" value.
-* :deltas: Test the resulting deltas from the emitter.
-* :with-state: Expects a function that is given the resulting state. Useful for doing custom assertions e.g. effect assertions.
-"
+  Options:
+  * :data-model: Takes a vector pair and checks that the given node has that value. For example, [[:nickname] \"Dude\"] -> [:nickname] path has \"Dude\" value.
+  * :deltas: Test the resulting deltas from the emitter.
+  * :with-state: Expects a function that is given the resulting state. Useful for doing custom assertions e.g. effect assertions."
   [message & {:keys [node] :as options}]
   (let [app (app/build example-app)]
     (app/begin app)
