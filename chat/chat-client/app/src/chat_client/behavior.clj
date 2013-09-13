@@ -20,6 +20,7 @@
               [chat-client.util :as util]))
 
 ;; Transforms
+
 (defn nickname-transform
   [_ message]
   (:nickname message))
@@ -95,11 +96,13 @@
         out (deleted-msgs (d/old-and-new inputs [:outbound]) :sent)]
     (concat in out)))
 
-;; Effect
+;; Effects
+
 (defn send-message-to-server [outbound]
   [{msg/topic [:server] :out-message (:sending outbound)}])
 
-;; Emits
+;; Emitters
+
 (defn init-app-model [_]
   [{:chat
     {:log {}
@@ -178,6 +181,7 @@
 ;; [:chat :log :*] - Chat messages by id
 ;; [:chat :form :*] - Rendering transforms that chat user interacts with
 ;; [:chat :nickname] - Displays chat user
+
 (def example-app
   {:version 2
    :transform [[:set-nickname [:nickname] nickname-transform]
