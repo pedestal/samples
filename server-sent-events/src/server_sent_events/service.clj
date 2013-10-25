@@ -1,5 +1,6 @@
 (ns server-sent-events.service
-  (:require [io.pedestal.service.http :as bootstrap]
+  (:require [clojure.core.async :as async]
+            [io.pedestal.service.http :as bootstrap]
             [io.pedestal.service.http.sse :as sse]
             [io.pedestal.service.http.route :as route]
             [io.pedestal.service.http.route.definition :refer [defroutes]]
@@ -9,17 +10,18 @@
   "Counts down to 0, sending value of counter to sse context and
   recursing on a different thread; ends event stream when counter
   is 0."
-  [ctx count]
-  (sse/send-event ctx "count" (str count ", thread: " (.getId (Thread/currentThread))))
-  (Thread/sleep 2000)
-  (if (> count 0)
-    (future (send-counter ctx (dec count)))
-    (sse/end-event-stream ctx)))
+  [channel count]
+  (async/go
+   (async/>! channel (str count ", thread: " (.getId (Thread/currentThread))))
+   (<! (async/timeout 2000))
+   (if (> count 0)
+     (future (send-counter channel (dec count)))
+     (async/close! channel))))
 
 (defn sse-stream-ready
   "Starts sending counter events to client."
-  [ctx]
-  (send-counter ctx 10))
+  [channel]
+  (send-counter channel 10))
 
 ;; Wire root URL to sse event stream
 (defroutes routes
