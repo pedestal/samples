@@ -12,6 +12,8 @@
 (ns helloworld-app.start
   (:require [io.pedestal.app.construct :as construct]
             [io.pedestal.app.route :as route]
+            ;; This needs to be included somewhere in order for the tools to work.
+            [io.pedestal.app-tools.tooling :as tooling]
             [domina :as dom])
   (:use [cljs.core.async :only [put! chan]]))
 
