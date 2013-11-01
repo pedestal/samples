@@ -70,29 +70,7 @@
                         :menu-template "tooling.html"}}
     ;; Each aspect provides a unique way to view and interact with
     ;; this application.
-    :aspects {;; Add an aspect that uses the data renderer
-              :data-ui {;; Provide the name of the host page that will
-                        ;; be generated to host this application. This
-                        ;; page will be generated from the template
-                        ;; application.html
-                        :uri "/helloworld-app-data-ui.html"
-                        ;; Provide the name that will appear in the
-                        ;; control panel for this aspect.
-                        :name "Data UI"
-                        :order 1
-                        :out-file "helloworld-app-data-ui.js"
-                        ;; The namespace which contains the `main`
-                        ;; function to call to start the application.
-                        :main 'helloworld_app.simulated.start
-                        ;; Allow render data recording. Use
-                        ;; Alt-Shift-R to start and stop recording.
-                        :recording? true
-                        ;; Turn on logging
-                        :logging? true
-                        ;; build output goes to tools/out/public
-                        :output-root :tools-public
-                        ;; The data-ui aspect uses the tooling.html template
-                        :template "tooling.html"}
+    :aspects {
               :development {:uri "/helloworld-app-dev.html"
                             :name "Development"
                             :out-file "helloworld-app-dev.js"
