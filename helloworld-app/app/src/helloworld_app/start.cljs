@@ -31,9 +31,15 @@
 (defn inc-counter [_ inform]
   [[[[:info :count] inc]]])
 
+(defn inspect [s]
+  (fn [_ inform-message]
+    (.log js/console s (pr-str inform-message))
+    []))
+
 (def config
   {:in [[inc-counter [:app] :inc]]
-   :out [[render-value [:info :count] :*]]})
+   :out [[render-value [:info :count] :*]
+         [(inspect "Rendering:") [:**] :*]]})
 
 (defn create-app []
   (let [cin (construct/build {:info {:count 0}} config)]
