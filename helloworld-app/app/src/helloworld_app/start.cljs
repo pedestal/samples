@@ -10,38 +10,33 @@
 ; You must not remove this notice, or any other, from this software.
 
 (ns helloworld-app.start
-  (:require [io.pedestal.app.protocols :as p]
-            [io.pedestal.app :as app]
-            [io.pedestal.app.render.push :as push-render]
-            [io.pedestal.app.render :as render]
-            [io.pedestal.app.messages :as msg]
-            [domina :as dom]))
+  (:require [io.pedestal.app.construct :as construct]
+            [io.pedestal.app.route :as route]
+            [domina :as dom])
+  (:use [cljs.core.async :only [put! chan]]))
 
-(defn inc-transform [old-value _]
-  ((fnil inc 0) old-value))
-
-(def count-app {:version 2
-                :transform [[:inc [:count] inc-transform]]})
-
-(defn receive-input [input-queue]
-  (p/put-message input-queue {msg/topic [:count] msg/type :inc})
-  (.setTimeout js/window #(receive-input input-queue) 3000))
-
-(defn create-app [render-config]
-  (let [app (app/build count-app)
-        render-fn (push-render/renderer "content" render-config render/log-fn)
-        app-model (render/consume-app-model app render-fn)]
-    (app/begin app)
-    (receive-input (:input app))
-    {:app app :app-model app-model}))
-
-(defn render-value [r [_ _ old-value new-value] input-queue]
+(defn render-value
+  [_ [[_ _ _ model]]]
   (dom/destroy-children! (dom/by-id "content"))
   (dom/append! (dom/by-id "content")
-               (str "<h1>" new-value " Hello Worlds</h1>")))
+               (str "<h1>" (get-in model [:info :count]) " Hello Worlds</h1>"))
+  [])
 
-(defn render-config []
-  [[:value [:**] render-value]])
+(defn receive-input [cin]
+  (put! cin [[[:app] :inc]])
+  (.setTimeout js/window #(receive-input cin) 3000))
+
+(defn inc-counter [_ inform]
+  [[[[:info :count] inc]]])
+
+(def config
+  {:in [[inc-counter [:app] :inc]]
+   :out [[render-value [:info :count] :*]]})
+
+(defn create-app []
+  (let [cin (construct/build {:info {:count 0}} config)]
+    (receive-input cin)
+    cin))
 
 (defn ^:export main []
-  (create-app (render-config)))
+  (create-app))
