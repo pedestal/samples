@@ -26,14 +26,12 @@ cd chat-server
 mkdir resources
 cd resources
 
-# Linux only:
-ln -s ../../chat-client/out/public
+ln -s ../../chat-client/out/public public
+
+# Or, on Windows
+xcopy /e ..\..\chat-client\out\public .\public
 
 cd ..
-
-# Windows only:
-xcopy /e ..\chat-client\out\public .\resources\public
-
 lein run # Launch webserver on port 8080.
 ```
 
