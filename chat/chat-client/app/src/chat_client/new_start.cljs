@@ -6,12 +6,14 @@
             [chat-client.widgetry.registry :as registry]
             [chat-client.app :as app]
             #_[chat-client.services :as services]
-            [chat-client.widgets.login :as wlogin])
+            [chat-client.widgets.login :as wlogin]
+            [chat-client.widgets.chat :as wchat])
   (:use [cljs.core.async :only [put! chan close!]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (def widgets
-  {:login wlogin/create!})
+  {:login wlogin/create!
+   :chat wchat/create!})
 
 (defn hide-functions [transform-message]
   (mapv (fn [msg]

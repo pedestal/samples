@@ -5,7 +5,7 @@
         (= event :removed-widget) [[[[:info :visible] disj wid]]]))
 
 (defn startup [_ inform-message]
-  [[[[:ui :root] :change-screen :login [:ui :login]]]])
+  [[[[:ui :root] :change-screen :chat [:ui :chat]]]])
 
 (defn login [_ [[_ _ creds]]]
   [[[[:ui :login] :authenticating (:uid creds)]
@@ -25,10 +25,11 @@
            []
            inform-message)))
 
+;; TODO - investigate possible bug: inform-message is being passed as a first arg
 (defn inspect [s]
-  (fn [_ inform-message]
+  (fn [path inform-message]
     (.log js/console s)
-    (.log js/console (pr-str inform-message))
+    (.log js/console (pr-str path inform-message))
     [])) 
 
 (def config
