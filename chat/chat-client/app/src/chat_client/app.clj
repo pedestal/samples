@@ -11,6 +11,14 @@
   [[[[:ui :login] :authenticating (:uid creds)]
     #_[[:services :auth] :authenticate (:uid creds) (:pw creds)]]])
 
+(defn set-nickname [_ [[_ _ val]]]
+  [[[[:info :nickname] constantly (:nickname val)]
+    ;; TODO - display nickname
+    ;; enable clear-nickname
+    ;; enable send-message
+    ;; disable set-nickname
+    ]])
+
 (defn authenticated [_ [[_ _ creds]]]
   [[[[:ui :root] :change-screen :counter [:ui :counter]]
     [[:info :user] assoc :creds creds]]])
@@ -30,17 +38,16 @@
   (fn [path inform-message]
     (.log js/console s)
     (.log js/console (pr-str path inform-message))
-    [])) 
+    []))
 
 (def config
   {:in [[visible-widgets [:registry] :*]
         [startup [:app] :startup]
-        #_[login [:ui :login] :submit]
+        [set-nickname [:ui :chat] :set-nickname]
         #_[authenticated [:services :auth] :authenticated]
-        [inc-button-clicked [:ui :button :*] :click]
         [(inspect "<<<<<<<<") [:**] :*]]
    
    :out [#_[text-updated [:info :counter :*] :*]
-         [set-nickname [:info :nickname] :added [:info :nickname] :updated] ; -> [:ui :chat] :set-nickname
-         [clear-nickname [:info :nickname] :removed] ; -> [:ui :chat] :disable-nickname
+         #_[set-nickname [:info :nickname] :added [:info :nickname] :updated] ; -> [:ui :chat] :set-nickname
+         #_[clear-nickname [:info :nickname] :removed] ; -> [:ui :chat] :disable-nickname
          [(inspect ">>>>>>>>") [:**] :*]]})
