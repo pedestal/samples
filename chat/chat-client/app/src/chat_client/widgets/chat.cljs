@@ -1,6 +1,8 @@
 (ns chat-client.widgets.chat
   (:require [dommy.core :as dommy]
+            [chat-client.widgets.set-nickname :as set-nickname]
             [chat-client.widgetry.rendering :as r]
+            [chat-client.widgetry.registry :as registry]
             [chat-client.widgetry.widget :as w])
   (:require-macros [dommy.macros :refer [sel1]])
   (:use [cljs.core.async :only [put!]]))
@@ -43,10 +45,7 @@
         password (dommy/value (sel1 :#login-password))]
     (put! ichan [[wid :submit {:uid uid :pw password}]])))
 
-(defn- set-nickname [wid ichan]
-  (put! ichan [[wid :set-nickname {:nickname (dommy/value (sel1 :#nickname-input))}]])
-  ;; behind a transform?
-  (set! (.-value (sel1 :#nickname-input)) ""))
+
 
 #_(defmethod transform! :authenticating [context state [_ _ uid]]
   (r/clear-all! :#login-form)
@@ -56,19 +55,12 @@
   state)
 
 (defn- create-widget! [{:keys [domid wid ichan]}]
-  (dommy/append! (sel1 domid)
-                 template)
-  ;; initialization - put in a message?
-  (dommy/add-class! (sel1 :#root) "startup")
-  (dommy/remove-class! (sel1 :.enter-nickname) "hide")
-  (.focus (sel1 :#nickname-input))
-
-  (r/add-listener! :click :form.enter-nickname :#set-nickname-button #(set-nickname wid ichan))
+  (dommy/append! (sel1 domid) template)
+  (registry/add-widget! (set-nickname/create! [:ui :set-nickname] :form.enter-nickname ichan))
   #_(r/add-listener! :click :#login-form :#login-submit #(send-login! wid ichan)))
 
 (defn destroy! [domid]
-  (r/clear-all! :#login-form)
-  (r/remove-all! domid))
+  #_(r/remove-all! domid))
 
 (defn create! [wid domid ichan & args]
   (let [widget {:wid wid :domid domid :ichan ichan :destroy #(destroy! domid)}

@@ -16,7 +16,6 @@
     ;; TODO - display nickname
     ;; enable clear-nickname
     ;; enable send-message
-    ;; disable set-nickname
     ]])
 
 (defn authenticated [_ [[_ _ creds]]]
@@ -43,7 +42,7 @@
 (def config
   {:in [[visible-widgets [:registry] :*]
         [startup [:app] :startup]
-        [set-nickname [:ui :chat] :set-nickname]
+        [set-nickname [:ui :set-nickname] :set-nickname]
         #_[authenticated [:services :auth] :authenticated]
         [(inspect "<<<<<<<<") [:**] :*]]
    
