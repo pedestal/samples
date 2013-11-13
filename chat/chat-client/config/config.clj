@@ -108,6 +108,12 @@
                             :main 'chat_client.start
                             :logging? true
                             :order 4}
+              :new {:uri "/chat-client-new.html"
+                    :name "new"
+                    :out-file "chat-client-new.js"
+                    :main 'chat_client.new-start
+                    ;:logging? true
+                    :order 4}
               :fresh {:uri "/fresh.html"
                       :name "Fresh"
                       :out-file "fresh.js"
