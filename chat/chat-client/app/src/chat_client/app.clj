@@ -11,8 +11,10 @@
   [[[[:ui :login] :authenticating (:uid creds)]
     #_[[:services :auth] :authenticate (:uid creds) (:pw creds)]]])
 
-(defn set-nickname [_ [[_ _ val]]]
-  [[[[:info :nickname] constantly (:nickname val)]
+;; TODO - buggy reverse?
+(defn set-nickname [[[_ _ value]] _]
+  [[[[:info :nickname] constantly (:nickname value)]
+    [[:ui :chat] :nickname-set]
     ;; TODO - display nickname
     ;; enable clear-nickname
     ;; enable send-message
@@ -42,7 +44,7 @@
 (def config
   {:in [[visible-widgets [:registry] :*]
         [startup [:app] :startup]
-        [set-nickname [:ui :set-nickname] :set-nickname]
+        [set-nickname [:ui :set-nickname] :click]
         #_[authenticated [:services :auth] :authenticated]
         [(inspect "<<<<<<<<") [:**] :*]]
    

@@ -1,6 +1,8 @@
 (ns chat-client.widgets.chat
   (:require [dommy.core :as dommy]
             [chat-client.widgets.set-nickname :as set-nickname]
+            [chat-client.widgets.send-message :as send-message]
+            [chat-client.widgets.util :as util]
             [chat-client.widgetry.rendering :as r]
             [chat-client.widgetry.registry :as registry]
             [chat-client.widgetry.widget :as w])
@@ -40,30 +42,19 @@
        [:input#nickname-input {:type "text" :placeholder "Enter your nickname..."}]]]
      ]]])
 
-#_(defn- send-login! [wid ichan]
-  (let [uid (dommy/value (sel1 :#login-email))
-        password (dommy/value (sel1 :#login-password))]
-    (put! ichan [[wid :submit {:uid uid :pw password}]])))
-
-
-
-#_(defmethod transform! :authenticating [context state [_ _ uid]]
-  (r/clear-all! :#login-form)
-  (dommy/append! (sel1 :#login-form) [:.authenticating
-                                      [:h1 "Authenticating... "]
-                                      [:h2 uid]])
+(defmethod transform! :nickname-set [{:keys [ichan]} state _]
+  (registry/remove-widget! [:ui :set-nickname] ichan)
+  (registry/add-widget! (send-message/create! [:ui :send-message] :form.enter-message ichan))
+  ;; TODO: enable clear-nickname
   state)
 
 (defn- create-widget! [{:keys [domid wid ichan]}]
   (dommy/append! (sel1 domid) template)
-  (registry/add-widget! (set-nickname/create! [:ui :set-nickname] :form.enter-nickname ichan))
-  #_(r/add-listener! :click :#login-form :#login-submit #(send-login! wid ichan)))
+  (registry/add-widget! (set-nickname/create! [:ui :set-nickname] :form.enter-nickname ichan)))
 
 (defn destroy! [domid]
   #_(r/remove-all! domid))
 
-(defn create! [wid domid ichan & args]
-  (let [widget {:wid wid :domid domid :ichan ichan :destroy #(destroy! domid)}
-        tchan (w/start! widget {} transform!)]
-    (create-widget! widget)
-    (assoc widget :tchan tchan)))
+(def create! (util/create! :create create-widget!
+                           :destroy destroy!
+                           :transform transform!))
