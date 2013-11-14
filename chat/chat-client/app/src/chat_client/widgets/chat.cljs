@@ -2,6 +2,7 @@
   (:require [dommy.core :as dommy]
             [chat-client.widgets.set-nickname :as set-nickname]
             [chat-client.widgets.send-message :as send-message]
+            [chat-client.widgets.clear-nickname :as clear-nickname]
             [chat-client.widgets.util :as util]
             [chat-client.widgetry.rendering :as r]
             [chat-client.widgetry.registry :as registry]
@@ -31,7 +32,7 @@
      [:form {:class "enter-message hide"}
       [:.right
        [:i.nickname-icon]
-       [:button#send-message-button.send-button {:type "button"}]]
+       [:button#send-message-button.send-button {:type "submit"} "Send"]]
       [:i {:class "message-icon focused"}]
       [:input#message-input {:type "text" :placeholder "Enter a message..."}]]
      [:form.enter-nickname
@@ -45,8 +46,13 @@
 (defmethod transform! :nickname-set [{:keys [ichan]} state _]
   (registry/remove-widget! [:ui :set-nickname] ichan)
   (registry/add-widget! (send-message/create! [:ui :send-message] :form.enter-message ichan))
-  ;; TODO: enable clear-nickname
+  (registry/add-widget! (clear-nickname/create! [:ui :clear-nickname] :.nickname-icon ichan))
   state)
+
+(defmethod transform! :nickname-cleared [{:keys [ichan]} state _]
+  (registry/remove-widget! [:ui :clear-nickname] ichan)
+  (registry/remove-widget! [:ui :send-message] ichan)
+  (registry/add-widget! (set-nickname/create! [:ui :set-nickname] :form.enter-nickname ichan)))
 
 (defn- create-widget! [{:keys [domid wid ichan]}]
   (dommy/append! (sel1 domid) template)

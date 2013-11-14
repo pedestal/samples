@@ -16,9 +16,10 @@
   [[[[:info :nickname] constantly (:nickname value)]
     [[:ui :chat] :nickname-set]
     ;; TODO - display nickname
-    ;; enable clear-nickname
-    ;; enable send-message
     ]])
+
+(defn clear-nickname [[[_ _ value]] _]
+  [[[[:ui :chat] :nickname-cleared]]])
 
 (defn authenticated [_ [[_ _ creds]]]
   [[[[:ui :root] :change-screen :counter [:ui :counter]]
@@ -45,6 +46,7 @@
   {:in [[visible-widgets [:registry] :*]
         [startup [:app] :startup]
         [set-nickname [:ui :set-nickname] :click]
+        [clear-nickname [:ui :clear-nickname] :click]
         #_[authenticated [:services :auth] :authenticated]
         [(inspect "<<<<<<<<") [:**] :*]]
    
