@@ -29,7 +29,7 @@
         :else (.log js/console (pr-str message))))
 
 (defn create-app []
-  (let [cin (construct/build {:info {}} app/config)
+  (let [cin (construct/build {:info {:sent []}} app/config)
         ;services-transform (start-services! cin)
         widgets-transform-c (chan 10)]
     

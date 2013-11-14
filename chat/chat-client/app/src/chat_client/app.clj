@@ -1,4 +1,6 @@
-(ns ^:shared chat-client.app)
+(ns ^:shared chat-client.app
+  (:require [chat-client.util :as util]
+            [io.pedestal.app.util.platform :as platform]))
 
 (defn visible-widgets [[[_ event wid]]]
   (cond (= event :created-widget) [[[[:info :visible] (fnil conj #{}) wid]]]
@@ -6,10 +8,6 @@
 
 (defn startup [inform-message]
   [[[[:ui :root] :change-screen :chat [:ui :chat]]]])
-
-(defn login [_ [[_ _ creds]]]
-  [[[[:ui :login] :authenticating (:uid creds)]
-    #_[[:services :auth] :authenticate (:uid creds) (:pw creds)]]])
 
 (defn set-nickname [[[_ _ value]]]
   [[[[:info :nickname] (constantly (:nickname value))]
@@ -21,19 +19,18 @@
   [[[[:ui :chat] :nickname-cleared]
     [[:info] dissoc :nickname]]])
 
-(defn authenticated [_ [[_ _ creds]]]
-  [[[[:ui :root] :change-screen :counter [:ui :counter]]
-    [[:info :user] assoc :creds creds]]])
+(defn add-message [info message]
+  (let [msg {:id (util/random-id)
+             :time (platform/date)
+             :nickname (:nickname info)
+             :text (:text message)
+             :status :pending}]
+    (-> info
+        (update-in [:sent] conj msg)
+        (assoc :sending msg))))
 
-(defn inc-button-clicked [_ [[[_ _ counter-id]]]]
-  [[[[:info :counter counter-id] inc]]])
-
-(defn text-updated [_ inform-message]
-  (vector
-   (reduce (fn [a [[_ _ cid] _ _ model]]
-             (conj a [[:ui :number cid] :set-text (get-in model [:info :counter cid])]))
-           []
-           inform-message)))
+(defn send-message [[[_ _ value]] _]
+  [[[[:info] add-message value]]])
 
 (defn inspect [s]
   (fn [inform-message]
@@ -46,10 +43,7 @@
         [startup [:app] :startup]
         [set-nickname [:ui :set-nickname] :click]
         [clear-nickname [:ui :clear-nickname] :click]
-        #_[authenticated [:services :auth] :authenticated]
+        [send-message [:ui :send-message] :click]
         [(inspect "<<<<<<<<") [:**] :*]]
-   
-   :out [#_[text-updated [:info :counter :*] :*]
-         #_[set-nickname [:info :nickname] :added [:info :nickname] :updated] ; -> [:ui :chat] :set-nickname
-         #_[clear-nickname [:info :nickname] :removed] ; -> [:ui :chat] :disable-nickname
-         [(inspect ">>>>>>>>") [:**] :*]]})
+
+   :out [[(inspect ">>>>>>>>") [:**] :*]]})

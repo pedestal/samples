@@ -6,7 +6,7 @@
   (:use [cljs.core.async :only [put!]]))
 
 (defn- send-message [wid ichan]
-  (put! ichan [[wid :click {:message (dommy/value (sel1 :#message-input))}]])
+  (put! ichan [[wid :click {:text (dommy/value (sel1 :#message-input))}]])
   (set! (.-value (sel1 :#message-input)) ""))
 
 (defn- create-widget! [{:keys [domid wid ichan]}]
