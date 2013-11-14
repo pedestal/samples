@@ -11,15 +11,15 @@
   [[[[:ui :login] :authenticating (:uid creds)]
     #_[[:services :auth] :authenticate (:uid creds) (:pw creds)]]])
 
-;; TODO - buggy reverse?
 (defn set-nickname [[[_ _ value]]]
-  [[[[:info :nickname] constantly (:nickname value)]
+  [[[[:info :nickname] (constantly (:nickname value))]
     [[:ui :chat] :nickname-set]
     ;; TODO - display nickname
     ]])
 
 (defn clear-nickname [[[_ _ value]]]
-  [[[[:ui :chat] :nickname-cleared]]])
+  [[[[:ui :chat] :nickname-cleared]
+    [[:info] dissoc :nickname]]])
 
 (defn authenticated [_ [[_ _ creds]]]
   [[[[:ui :root] :change-screen :counter [:ui :counter]]
