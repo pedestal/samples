@@ -1,10 +1,10 @@
 (ns ^:shared chat-client.app)
 
-(defn visible-widgets [_ [[_ event wid]]]
+(defn visible-widgets [[[_ event wid]]]
   (cond (= event :created-widget) [[[[:info :visible] (fnil conj #{}) wid]]]
         (= event :removed-widget) [[[[:info :visible] disj wid]]]))
 
-(defn startup [_ inform-message]
+(defn startup [inform-message]
   [[[[:ui :root] :change-screen :chat [:ui :chat]]]])
 
 (defn login [_ [[_ _ creds]]]
@@ -12,13 +12,13 @@
     #_[[:services :auth] :authenticate (:uid creds) (:pw creds)]]])
 
 ;; TODO - buggy reverse?
-(defn set-nickname [[[_ _ value]] _]
+(defn set-nickname [[[_ _ value]]]
   [[[[:info :nickname] constantly (:nickname value)]
     [[:ui :chat] :nickname-set]
     ;; TODO - display nickname
     ]])
 
-(defn clear-nickname [[[_ _ value]] _]
+(defn clear-nickname [[[_ _ value]]]
   [[[[:ui :chat] :nickname-cleared]]])
 
 (defn authenticated [_ [[_ _ creds]]]
@@ -35,11 +35,10 @@
            []
            inform-message)))
 
-;; TODO - investigate possible bug: inform-message is being passed as a first arg
 (defn inspect [s]
-  (fn [path inform-message]
+  (fn [inform-message]
     (.log js/console s)
-    (.log js/console (pr-str path inform-message))
+    (.log js/console (pr-str inform-message))
     []))
 
 (def config
