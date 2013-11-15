@@ -5,15 +5,13 @@
             [chat-client.widgetry.root :as root]
             [chat-client.widgetry.registry :as registry]
             [chat-client.app :as app]
-            #_[chat-client.services :as services]
-            [chat-client.widgets.login :as wlogin]
+            [chat-client.simulated.new-services :as services]
             [chat-client.widgets.chat :as wchat])
   (:use [cljs.core.async :only [put! chan close!]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (def widgets
-  {:login wlogin/create!
-   :chat wchat/create!})
+  {:chat wchat/create!})
 
 (defn hide-functions [transform-message]
   (mapv (fn [msg]
@@ -28,16 +26,17 @@
         
         :else (.log js/console (pr-str message))))
 
-(defn create-app []
-  (let [cin (construct/build {:info {:sent []}} app/config)
-        ;services-transform (start-services! cin)
+(defn create-app [start-services!]
+  (let [cin (construct/build {:info {:inbound {:received []}
+                                     :outbound {:sent []}}} app/config)
+        services-transform (start-services! cin)
         widgets-transform-c (chan 10)]
     
     (route/router [:ui :router] widgets-transform-c)
     (observers/subscribe :log log-print)
     (registry/set-router! [:ui :router] widgets-transform-c cin)
     
-    #_(put! cin [[[:io.pedestal.app.construct/router] :channel-added
+    (put! cin [[[:io.pedestal.app.construct/router] :channel-added
                 services-transform [:services :* :**]]])
     
     (put! cin [[[:io.pedestal.app.construct/router] :channel-added
@@ -50,4 +49,4 @@
     cin))
 
 (defn ^:export main []
-  (create-app #_services/start-services!))
+  (create-app services/start-services!))

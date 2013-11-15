@@ -26,11 +26,26 @@
              :text (:text message)
              :status :pending}]
     (-> info
-        (update-in [:sent] conj msg)
-        (assoc :sending msg))))
+        (update-in [:outbound :sent] conj msg)
+        (assoc-in [:outbound :sending] msg))))
 
-(defn send-message [[[_ _ value]] _]
-  [[[[:info] add-message value]]])
+(defn send-message [[[_ _ msg]]]
+  [[[[:info] add-message msg]]])
+
+(defn inbound-received*
+  [info message]
+  (let [msg {:id (:id message)
+             :time (platform/date)
+             :nickname (:nickname message)
+             :text (:text message)}]
+    (update-in info [:received] conj msg)))
+
+(defn inbound-received [[[_ _ msg]]]
+  [[[[:info :inbound] inbound-received* msg]]])
+
+(defn send-outbound [[[_ _ _ model]]]
+  ;; Can't use path since it's actually triggered at [:info :outbound :sending :*]
+  [[[[:services :message] :receive-inbound (get-in model [:info :outbound :sending])]]])
 
 (defn inspect [s]
   (fn [inform-message]
@@ -44,6 +59,8 @@
         [set-nickname [:ui :set-nickname] :click]
         [clear-nickname [:ui :clear-nickname] :click]
         [send-message [:ui :send-message] :click]
+        [inbound-received [:services :message] :inbound-received]
         [(inspect "<<<<<<<<") [:**] :*]]
 
-   :out [[(inspect ">>>>>>>>") [:**] :*]]})
+   :out [[send-outbound [:info :outbound :sending :*] :*]
+         [(inspect ">>>>>>>>") [:**] :*]]})
