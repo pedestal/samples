@@ -15,7 +15,8 @@
 (defmethod transform! :default [context state transformation]
   (w/default-transform! context state transformation))
 
-(defmethod transform! :nickname-set [{:keys [ichan]} state _]
+(defmethod transform! :nickname-set [{:keys [ichan]} state [_ _ nickname]]
+  (dommy/set-text! (sel1 :span.name) nickname)
   (registry/remove-widget! [:ui :set-nickname] ichan)
   (registry/add-widget! (send-message/create! [:ui :send-message] :form.enter-message ichan))
   (registry/add-widget! (clear-nickname/create! [:ui :clear-nickname] :.nickname-icon ichan))

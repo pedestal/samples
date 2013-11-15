@@ -11,9 +11,7 @@
 
 (defn set-nickname [[[_ _ value]]]
   [[[[:info :nickname] (constantly (:nickname value))]
-    [[:ui :chat] :nickname-set]
-    ;; TODO - display nickname
-    ]])
+    [[:ui :chat] :nickname-set (:nickname value)]]])
 
 (defn clear-nickname [[[_ _ value]]]
   [[[[:ui :chat] :nickname-cleared]
@@ -33,12 +31,12 @@
   [[[[:info] add-message msg]]])
 
 (defn inbound-received*
-  [info message]
+  [current message]
   (let [msg {:id (:id message)
              :time (platform/date)
              :nickname (:nickname message)
              :text (:text message)}]
-    (update-in info [:received] conj msg)))
+    (update-in current [:received] conj msg)))
 
 (defn inbound-received [[[_ _ msg]]]
   [[[[:info :inbound] inbound-received* msg]]])
