@@ -1,5 +1,6 @@
 (ns ^:shared chat-client.app
   (:require [chat-client.util :as util]
+            [clojure.set :as set]
             [io.pedestal.app.util.platform :as platform]))
 
 (defn visible-widgets [[[_ event wid]]]
@@ -45,6 +46,25 @@
   ;; Can't use path since it's actually triggered at [:info :outbound :sending :*]
   [[[[:services :message] :receive-inbound (get-in model [:info :outbound :sending])]]])
 
+
+(defn diff-by [f new old]
+  (let [o (set (map f old))
+        n (set (map f new))
+        new-keys (set/difference n o)]
+    (filter (comp new-keys f) new)))
+
+(defn new-msgs [{:keys [old new]} k]
+  (let [o (set (get-in old k))
+        n (set (get-in new k))]
+    (diff-by :id n o)))
+
+(defn add-new-messages [[[path event old new]]]
+  [[[[:info :new-messages]
+     (constantly (sort-by :time (new-msgs {:old old :new new} path)))]]])
+
+(defn add-logs [[[path _ _ new]]]
+  [[[[:ui :chat] :add-logs (get-in new path)]]])
+
 (defn inspect [s]
   (fn [inform-message]
     (.log js/console s)
@@ -61,4 +81,6 @@
         [(inspect "<<<<<<<<") [:**] :*]]
 
    :out [[send-outbound [:info :outbound :sending :*] :*]
+         [add-new-messages [:info :inbound :received] :*]
+         [add-logs [:info :new-messages] :*]
          [(inspect ">>>>>>>>") [:**] :*]]})

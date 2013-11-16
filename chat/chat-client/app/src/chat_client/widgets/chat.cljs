@@ -3,6 +3,7 @@
             [chat-client.widgets.set-nickname :as set-nickname]
             [chat-client.widgets.send-message :as send-message]
             [chat-client.widgets.clear-nickname :as clear-nickname]
+            [chat-client.widgets.log :as log]
             [chat-client.widgets.util :as util]
             [chat-client.widgetry.rendering :as r]
             [chat-client.widgetry.registry :as registry]
@@ -26,6 +27,11 @@
   (registry/remove-widget! [:ui :clear-nickname] ichan)
   (registry/remove-widget! [:ui :send-message] ichan)
   (registry/add-widget! (set-nickname/create! [:ui :set-nickname] :form.enter-nickname ichan)))
+
+(defmethod transform! :add-logs [{:keys [ichan]} _ [_ _ logs]]
+  (doseq [log logs]
+    (registry/add-widget!
+      (apply log/create! [:ui :chat :log (:id log)] :.messages ichan (reduce into log)))))
 
 (def template
   [:#root.startup
@@ -58,9 +64,6 @@
   (dommy/append! (sel1 domid) template)
   (registry/add-widget! (set-nickname/create! [:ui :set-nickname] :form.enter-nickname ichan)))
 
-(defn destroy! [domid]
-  #_(r/remove-all! domid))
-
 (def create! (util/create! :create create-widget!
-                           :destroy destroy!
+                           :destroy r/remove-all!
                            :transform transform!))
