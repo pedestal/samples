@@ -8,7 +8,8 @@
         (= event :removed-widget) [[[[:info :visible] disj wid]]]))
 
 (defn startup [inform-message]
-  [[[[:ui :root] :change-screen :chat [:ui :chat]]]])
+  [[[[:ui :root] :change-screen :chat [:ui :chat]]
+    [[:services :message] :start-receiving]]])
 
 (defn set-nickname [[[_ _ value]]]
   [[[[:info :nickname] (constantly (:nickname value))]
