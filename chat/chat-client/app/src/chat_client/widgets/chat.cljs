@@ -5,7 +5,6 @@
             [chat-client.widgets.clear-nickname :as clear-nickname]
             [chat-client.widgets.log :as log]
             [chat-client.widgets.util :as util]
-            [chat-client.widgetry.rendering :as r]
             [chat-client.widgetry.registry :as registry]
             [chat-client.widgetry.widget :as w])
   (:require-macros [dommy.macros :refer [sel1]])
@@ -65,5 +64,4 @@
   (registry/add-widget! (set-nickname/create! [:ui :set-nickname] :form.enter-nickname ichan)))
 
 (def create! (util/create! :create create-widget!
-                           :destroy r/remove-all!
                            :transform transform!))

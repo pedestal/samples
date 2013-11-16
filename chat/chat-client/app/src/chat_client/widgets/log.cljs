@@ -22,6 +22,4 @@
        [:span.time] (format-time (:time options))]
       [:.content (:text options)]]]))
 
-(def create! (util/create! :create create-widget!
-                           ;; TODO
-                           :destroy (constantly nil)))
+(def create! (util/create! :create create-widget!))

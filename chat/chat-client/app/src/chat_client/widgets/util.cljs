@@ -1,11 +1,12 @@
 (ns chat-client.widgets.util
   "Common widget fns"
-  (:require [chat-client.widgetry.widget :as w]))
+  (:require [chat-client.widgetry.widget :as w]
+            [chat-client.widgetry.rendering :as r]))
 
 (defn create!
   [& options]
   (let [{:keys [create destroy transform]
-         :or {transform w/default-transform!}} (apply hash-map options)]
+         :or {transform w/default-transform! destroy r/remove-all!}} (apply hash-map options)]
     (fn [wid domid ichan & args]
       (let [widget {:wid wid
                     :domid domid
