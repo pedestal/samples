@@ -30,7 +30,7 @@
 (defmethod transform! :add-logs [{:keys [ichan]} _ [_ _ logs]]
   (doseq [log logs]
     (registry/add-widget!
-      (apply log/create! [:ui :chat :log (:id log)] :.messages ichan (reduce into log)))))
+      (apply log/create! [:ui :log (:id log)] :.messages ichan (reduce into log)))))
 
 (def template
   [:#root.startup
