@@ -18,7 +18,7 @@
   (:use [cljs.core.async :only [put! chan]]))
 
 (defn render-value
-  [_ [[_ _ _ model]]]
+  [[[_ _ _ model]]]
   (dom/destroy-children! (dom/by-id "content"))
   (dom/append! (dom/by-id "content")
                (str "<h1>" (get-in model [:info :count]) " Hello Worlds</h1>"))
@@ -28,16 +28,17 @@
   (put! cin [[[:app] :inc]])
   (.setTimeout js/window #(receive-input cin) 3000))
 
-(defn inc-counter [_ inform]
+(defn inc-counter [inform]
   [[[[:info :count] inc]]])
 
 (defn inspect [s]
-  (fn [_ inform-message]
+  (fn [inform-message]
     (.log js/console s (pr-str inform-message))
     []))
 
 (def config
-  {:in [[inc-counter [:app] :inc]]
+  {:in [[inc-counter [:app] :inc]
+        [(inspect "Input:") [:**] :*]]
    :out [[render-value [:info :count] :*]
          [(inspect "Rendering:") [:**] :*]]})
 
