@@ -42,6 +42,11 @@
                  :name "UI"
                  :out-file "chat-client-ui.js"
                  :main chat-client.simulated.start
+                 :optimizations :simple
+                 :compiler-options {
+                                    :source-map "out/public/generated-js/chat-client-ui.js.map"
+                                    ;; relative to map's location
+                                    :source-map-path "out"}
                  ;:logging? true
                  :order 1}
             :development {:uri "/chat-client-dev.html"

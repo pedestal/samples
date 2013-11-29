@@ -1,7 +1,7 @@
 (defproject chat-client "0.0.1-SNAPSHOT"
   :description "FIXME: write description"
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [org.clojure/clojurescript "0.0-1934"]
+                 [org.clojure/clojurescript "0.0-2080"]
                  [org.clojure/core.async "0.1.242.0-44b1e3-alpha"]
                  [prismatic/dommy "0.1.2"]
                  [domina "1.0.1"]
