@@ -72,6 +72,13 @@
     (.log js/console (pr-str inform-message))
     []))
 
+;; Info Model Paths
+;; [:nickname] - Nickname for chat user
+;; [:inbound :received] - Received inbound messages
+;; [:outbound :sent] - Sent outbound messages
+;; [:outbound :sending] - Pending message that goes to service
+;; [:new-messages] - Messages that are new, determined by id
+;; [:visible] - set of visible widgets
 (def config
   {:in [[visible-widgets [:registry] :*]
         [startup [:app] :startup]
