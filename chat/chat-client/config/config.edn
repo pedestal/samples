@@ -38,17 +38,23 @@
   ;; Each aspect provides a unique way to view and interact with
   ;; this application.
   :aspects {
+            :ui {:uri "/chat-client-ui.html"
+                 :name "UI"
+                 :out-file "chat-client-ui.js"
+                 :main chat-client.simulated.start
+                 ;:logging? true
+                 :order 1}
             :development {:uri "/chat-client-dev.html"
-                          ;:use-api-server? true
+                          :use-api-server? true
                           :name "Development"
                           :out-file "chat-client-dev.js"
-                          :main chat-client.new-start
-                          ;:logging? true
-                          :order 1}
+                          :main chat-client.start
+                          :logging? true
+                          :order 2}
             :production {:uri "/chat-client.html"
                          :use-api-server? true
                          :name "Production"
                          :optimizations :advanced
                          :out-file "chat-client.js"
                          :main chat-client.start
-                         :order 2}}}}
+                         :order 3}}}}

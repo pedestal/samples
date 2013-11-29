@@ -1,28 +1,52 @@
-; Copyright 2013 Relevance, Inc.
-
-; The use and distribution terms for this software are covered by the
-; Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0)
-; which can be found in the file epl-v10.html at the root of this distribution.
-;
-; By using this software in any fashion, you are agreeing to be bound by
-; the terms of this license.
-;
-; You must not remove this notice, or any other, from this software.
-
 (ns chat-client.simulated.start
-  (:require [io.pedestal.app.render.push.handlers.automatic :as d]
-            [chat-client.start :as start]
-            [chat-client.rendering :as rendering]
+  (:require [io.pedestal.app.construct :as construct]
+            [io.pedestal.app.route :as route]
+            [io.pedestal.app.util.observers :as observers]
+            [chat-client.widgetry.root :as root]
+            [chat-client.widgetry.registry :as registry]
+            [chat-client.app :as app]
             [chat-client.simulated.services :as services]
-            ;; This needs to be included somewhere in order for the
-            ;; tools to work.
-            [io.pedestal.app-tools.tooling :as tooling]))
+            [chat-client.widgets.chat :as wchat])
+  (:use [cljs.core.async :only [put! chan close!]])
+  (:require-macros [cljs.core.async.macros :refer [go]]))
+
+(def widgets
+  {:chat wchat/create!})
+
+(defn hide-functions [transform-message]
+  (mapv (fn [msg]
+          (mapv #(if (fn? %) :f %) msg))
+        transform-message))
+
+(defn log-print [message]
+  (cond (= (:in message) :router)
+        (.log js/console (str "> " (pr-str :router
+                                           (:id message)
+                                           (hide-functions (:transform message)))))
+        
+        :else (.log js/console (pr-str message))))
+
+(defn create-app [start-services!]
+  (let [cin (construct/build {:info {:inbound {:received []}
+                                     :outbound {:sent []}}} app/config)
+        services-transform (start-services! cin)
+        widgets-transform-c (chan 10)]
+    
+    (route/router [:ui :router] widgets-transform-c)
+    (observers/subscribe :log log-print)
+    (registry/set-router! [:ui :router] widgets-transform-c cin)
+    
+    (put! cin [[[:io.pedestal.app.construct/router] :channel-added
+                services-transform [:services :* :**]]])
+    
+    (put! cin [[[:io.pedestal.app.construct/router] :channel-added
+                widgets-transform-c [:ui :* :**]]])
+    
+    (let [root-widget (root/create! [:ui :root] :#content cin :widgets widgets)]
+      (registry/add-widget! root-widget))
+    
+    (put! cin [[[:app] :startup]])
+    cin))
 
 (defn ^:export main []
-  (let [uri (goog.Uri. (.toString (.-location js/document)))
-        renderer (.getParameterValue uri "renderer")
-        render-config (if (= renderer "auto")
-                        d/data-renderer-config
-                        (rendering/render-config))]
-    (doto (start/create-app render-config)
-      (start/setup-services services/->MockServices services/services-fn))))
+  (create-app services/start-services!))

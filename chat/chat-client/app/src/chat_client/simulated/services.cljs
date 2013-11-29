@@ -1,46 +1,39 @@
-; Copyright 2013 Relevance, Inc.
-
-; The use and distribution terms for this software are covered by the
-; Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0)
-; which can be found in the file epl-v10.html at the root of this distribution.
-;
-; By using this software in any fashion, you are agreeing to be bound by
-; the terms of this license.
-;
-; You must not remove this notice, or any other, from this software.
-
 (ns chat-client.simulated.services
-  (:require [cljs.reader :as r]
-            [io.pedestal.app.net.xhr :as xhr]
-            [io.pedestal.app.protocols :as p]
-            [io.pedestal.app.messages :as msg]
-            [chat-client.util :as util]))
+  (:require [io.pedestal.app.match :as match]
+            [chat-client.widgetry.log :as l]
+            [chat-client.util :as util])
+  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:use [cljs.core.async :only [chan <! >! put! alts! timeout close!]]))
 
-;; Notes: The MockServices can be used for testing without a server-side
-;; component; it simulates the server by sending new messages to the
-;; application every 10 seconds.
+(defn start-receiving
+  "This is used for testing without a server-side component; it simulates the server by sending new
+  messages to the application every 10 seconds."
+  [[id _ _ :as inform] ichan]
+  (.setTimeout js/window
+               (fn []
+                 (put! ichan
+                       [[id
+                         :inbound-received
+                         {:text (str "incoming message " (gensym))
+                          :nickname (str (gensym))
+                          :id (util/random-id)}]])
+                 (start-receiving inform ichan))
+               10000))
 
-(defn receive-messages [app]
-  (p/put-message (:input app)
-                 {msg/topic [:inbound]
-                  msg/type :received
-                  :text (str "incoming message " (gensym))
-                  :nickname (str (gensym))
-                  :id (util/random-id)})
-  (.setTimeout js/window (fn [] (receive-messages app)) 10000))
+(defn receive-inbound [[id _ msg] ichan]
+  (js/setTimeout #(put! ichan [[id :inbound-received msg]]) 500)
+  (.log js/console (str "Send to Server: " (pr-str msg))))
 
-(defrecord MockServices [app]
-  p/Activity
-  (start [this]
-    (receive-messages app))
-  (stop [this]))
+(def config
+  (match/index [[receive-inbound [:services :message] :receive-inbound]
+                [start-receiving [:services :message] :start-receiving]]))
 
-(defn services-fn [message input-queue]
-  (when-let [msg (:out-message message)]
-    (.setTimeout js/window #(p/put-message input-queue
-                                           {msg/topic [:inbound]
-                                            msg/type :received
-                                            :text (:text msg)
-                                            :nickname (:nickname msg)
-                                            :id (:id msg)}) 500)
-    (.log js/console (str "Send to Server: " (pr-str message)))))
+(defn start-services! [ichan]
+  (let [tchan (chan 10)]
+    (go (while true
+          (let [transform (<! tchan)]
+            (l/log "->" :transform-services :t transform)
+            (doseq [transformation transform]
+              (when-let [handler-fn (ffirst (match/match-items config transformation))]
+                (handler-fn transformation ichan))))))
+    tchan))
