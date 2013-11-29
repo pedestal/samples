@@ -36,14 +36,7 @@
   [:#root.startup
    [:.chat-wrapper
     [:.chat-frame
-     [:.messages
-      [:.message
-       [:.gutter]
-       [:.body
-        [:.header
-         [:span.name "anonymous"]
-         [:span.time] "- 10:23 PM"]
-        [:.content "Filler"]]]]
+     [:.messages]
      [:.chat-footer]]
     [:.chat-bar
      [:form {:class "enter-message hide"}

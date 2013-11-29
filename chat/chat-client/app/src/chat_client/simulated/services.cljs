@@ -9,15 +9,14 @@
   "This is used for testing without a server-side component; it simulates the server by sending new
   messages to the application every 10 seconds."
   [[id _ _ :as inform] ichan]
+  (put! ichan
+        [[id
+          :inbound-received
+          {:text (str "incoming message " (gensym))
+           :nickname (str (gensym))
+           :id (util/random-id)}]])
   (.setTimeout js/window
-               (fn []
-                 (put! ichan
-                       [[id
-                         :inbound-received
-                         {:text (str "incoming message " (gensym))
-                          :nickname (str (gensym))
-                          :id (util/random-id)}]])
-                 (start-receiving inform ichan))
+               (fn [] (start-receiving inform ichan))
                10000))
 
 (defn receive-inbound [[id _ msg] ichan]

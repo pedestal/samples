@@ -14,12 +14,13 @@
 (defn- create-widget! [{:keys [domid wid ichan options]}]
   (dommy/prepend!
     (sel1 domid)
-    [:.message
-     [:.gutter]
-     [:.body
-      [:.header
-       [:span.name (:nickname options)]
-       [:span.time] (format-time (:time options))]
-      [:.content (:text options)]]]))
+    [(keyword (str "#" (:id options))) {:class "message"}
+     [:.status.pending
+      [:.gutter]
+      [:.body
+       [:.header
+        [:span.name (:nickname options)]
+        [:span.time] (format-time (:time options))]
+       [:.content (:text options)]]]]))
 
 (def create! (util/create! :create create-widget!))
