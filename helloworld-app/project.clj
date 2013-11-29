@@ -18,9 +18,12 @@
                  [io.pedestal/pedestal.app "0.3.0-SNAPSHOT"]
                  [org.clojure/core.async "0.1.242.0-44b1e3-alpha"]
                  [io.pedestal/pedestal.app-tools "0.3.0-SNAPSHOT"]]
-  :profiles {:dev {:source-paths ["dev"]}}
   :min-lein-version "2.0.0"
   :source-paths ["app/src" "app/templates"]
   :resource-paths ["config"]
   :target-path "out/"
-  :aliases {"dumbrepl" ["trampoline" "run" "-m" "clojure.main/main"]})
+  :profiles {:dev {:resource-paths ["dev"]
+                   :dependencies [[io.pedestal/pedestal.app-tools "0.3.0-SNAPSHOT"]]
+                   :repl-options {:init-ns user
+                                  :welcome (println "Welcome to pedestal-app! Run (tools-help) to see a list of useful functions.")}}}
+  :main ^{:skip-aot true} io.pedestal.app-tools.dev)

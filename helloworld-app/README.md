@@ -4,14 +4,13 @@ You may start the application by running the following commands:
 
 ```
 $ lein repl
-(use 'dev)
 (start)
 ```
 
-Once it is started, browse to [http://localhost:3000/helloworld-app-dev.html](http://localhost:3000/helloworld-app-dev.html). To explore more about the app including Data UI and Render visit [http://localhost:3000/](http://localhost:3000).
+Once it is started, browse to [http://localhost:3000/helloworld-app-dev.html](http://localhost:3000/helloworld-app-dev.html).
 
 This app is structured differently than most pedestal-app applications in that behavior, rendering,
-templates and start are all collapsed into start. This was done just to demonstrate a more compact
+and start are all collapsed into start. This was done just to demonstrate a more compact
 application.
 
 ## Links

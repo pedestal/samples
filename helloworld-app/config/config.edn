@@ -1,0 +1,62 @@
+; Copyright 2013 Relevance, Inc.
+
+; The use and distribution terms for this software are covered by the
+; Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0)
+; which can be found in the file epl-v10.html at the root of this distribution.
+;
+; By using this software in any fashion, you are agreeing to be bound by
+; the terms of this license.
+;
+; You must not remove this notice, or any other, from this software.
+;
+;; The configuration below determines how an application is built,
+;; what is built and what features are available in the application
+;; development tool.
+
+;; One project can host multiple applications. The top-level of the
+;; config map contains one entry for each application.
+{:helloworld-app
+ {;; :build contains parameters which are passed to the build
+  :build {;; :watch-files contains a list of string regexs to watch for
+          ;; changes. Each file-regex has a tag associated with it, in
+          ;; this case :html.
+          ;;
+          ;; Run (doc io.pedestal.app-tools.build/expand-app-config) for more
+          ;; info
+          :watch-files {:html ["^app/templates"]}
+          ;; When an HTML file changes, trigger the compilation of
+          ;; any files which use macros to read in templates. This
+          ;; will force recompilation of these files and update
+          ;; the templates.
+          :triggers {:html ["helloworld_app/rendering\\.js$"]}}
+  ;; General application level configuration
+  :application {;; The directory where all generated JavaScript for
+                ;; this application will be written.
+                :generated-javascript "generated-js"
+                ;; The default template to use when creating host
+                ;; pages for each aspect below. Override this in an
+                ;; aspect by adding a :template key.
+                :default-template "application.html"
+                ;; The root directory in which to put build
+                ;; output. Possible values are :public and
+                ;; :tools-public. Override this value in an aspect
+                ;; with :tools-output. :public maps to out/public
+                ;; and :tools-public maps to tools/out/public.
+                :output-root :public}
+  :control-panel {} 
+  :built-in {} 
+  ;; Each aspect provides a unique way to view and interact with
+  ;; this application.
+  :aspects {
+            :development {:uri "/helloworld-app-dev.html"
+                          :name "Development"
+                          :out-file "helloworld-app-dev.js"
+                          :main helloworld_app.start
+                          :logging? true
+                          :order 4}
+            :production {:uri "/helloworld-app.html"
+                         :name "Production"
+                         :optimizations :advanced
+                         :out-file "helloworld-app.js"
+                         :main helloworld_app.start
+                         :order 6}}}}
